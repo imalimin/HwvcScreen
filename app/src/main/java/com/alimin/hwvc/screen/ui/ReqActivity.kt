@@ -1,22 +1,19 @@
-package com.alimin.hwvc.screen
+package com.alimin.hwvc.screen.ui
 
 import android.content.Context
 import android.content.Intent
-import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.support.v7.app.AppCompatActivity
+import com.alimin.hwvc.screen.AlDisplayService
+import com.alimin.hwvc.screen.R
 
-
-class MainActivity : AppCompatActivity() {
+class ReqActivity : AppCompatActivity() {
     private var mpm: MediaProjectionManager? = null
-    private val callback = object : MediaProjection.Callback() {
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_req)
 
         mpm = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         val intent = mpm?.createScreenCaptureIntent()
@@ -25,11 +22,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (null != data) {
-            if (REQ_PROJECTION == requestCode && RESULT_OK == resultCode) {
-//                mp = mpm?.getMediaProjection(resultCode, data)
+        if (RESULT_OK == resultCode) {
+            if (data != null && REQ_PROJECTION == requestCode) {
+                AlDisplayService.instance()?.setup(mpm?.getMediaProjection(resultCode, data))
             }
         }
+        finish()
     }
 
     companion object {

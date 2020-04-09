@@ -1,2 +1,4 @@
 include ':app'
+include(":hwvc")
+project(":hwvc").projectDir = new File("../hwvc/proj/hwvc_android/codec_native")
 rootProject.name='HwvcScreen'

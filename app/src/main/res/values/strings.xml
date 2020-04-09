@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HwvcScreen</string>
+    <string name="record_screen">录屏</string>
 </resources>
