@@ -1,13 +1,18 @@
 package com.alimin.hwvc.screen
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.graphics.Point
 import android.media.projection.MediaProjection
 import android.os.IBinder
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.WindowManager
 import com.alimin.hwvc.screen.ui.ReqActivity
 import com.alimin.hwvc.screen.widget.FloatWindow
 import com.lmy.hwvcnative.processor.AlDisplayRecorder
+
 
 class AlDisplayService : Service() {
     private var recorder: AlDisplayRecorder? = null
@@ -44,16 +49,18 @@ class AlDisplayService : Service() {
             return false
         }
         recorder?.release()
-        val metrics = resources.displayMetrics
         path = "${externalCacheDir.path}/camera.mp4"
+        val wm = baseContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val size = Point()
+        wm.defaultDisplay.getRealSize(size)
         recorder = AlDisplayRecorder(
-            mp, metrics.widthPixels, metrics.heightPixels,
-            metrics.densityDpi
+            mp, size.x, size.y, DisplayMetrics.DENSITY_MEDIUM
         )
         recorder?.setOutputFilePath(path)
-        recorder?.setFormat(1088, 1792)
+        recorder?.setFormat(1088, 1920)
         setupView()
-        Log.i("AlDisplayService", "setup success.")
+
+        Log.i("AlDisplayService", "setup success. ${size.x}x${size.y}")
         return true
     }
 

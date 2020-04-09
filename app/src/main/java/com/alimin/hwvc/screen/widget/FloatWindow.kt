@@ -45,6 +45,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         closeBtn = view?.findViewById(R.id.closeBtn)
         startBtn?.setOnClickListener(this)
         closeBtn?.setOnClickListener(this)
+        cropView?.setFixAlign(true)
     }
 
     fun show() {
@@ -57,7 +58,13 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         wm?.removeView(view)
     }
 
-    fun getRect(): RectF = cropView!!.getCropRectF()
+    fun getRect(): RectF {
+        val rectF = cropView!!.getCropRectFInDisplay()
+        val width = 1080 * rectF.width() / 2
+        val height = 1920 * rectF.height() / 2
+        Log.i("AlDisplayService", "getRect. ${width}x${height}")
+        return rectF
+    }
 
     override fun onClick(v: View) {
         when (v.id) {
