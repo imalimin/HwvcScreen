@@ -18,20 +18,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            startActivityForResult(
-                Intent(
-                    ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:$packageName")
-                ), 0x02
-            )
-            return
-        } else {
-//            startService(new Intent(MainActivity.this, FloatingService.class));
-        }
-
         startBtn.setOnClickListener {
-            startService(Intent(this@MainActivity, AlDisplayService::class.java))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+                startActivityForResult(
+                    Intent(
+                        ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:$packageName")
+                    ), 0x02
+                )
+            } else {
+                startService(Intent(this@MainActivity, AlDisplayService::class.java))
+            }
         }
     }
 }

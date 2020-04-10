@@ -2,10 +2,10 @@ package com.alimin.hwvc.screen.widget
 
 import android.content.Context
 import android.graphics.PixelFormat
+import android.graphics.Point
 import android.graphics.RectF
 import android.os.Build
 import android.util.Log
-import android.util.Size
 import android.view.*
 import com.alimin.hwvc.screen.R
 import com.lmy.hwvcnative.widget.AlCropView
@@ -15,7 +15,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     private var wm: WindowManager? = null
     private var view: View? = null
     private var lp: WindowManager.LayoutParams? = null
-    private var size: Size
+    private val size = Point()
 
     private var cropView: AlCropView? = null
     private var startBtn: View? = null
@@ -24,9 +24,9 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
 
     init {
         wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val metrics = ctx.resources.displayMetrics
-        size = Size(metrics.widthPixels, metrics.heightPixels)
-        adjustSize = (size.width * 0.2f).toInt()
+        val wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        wm.defaultDisplay.getRealSize(size)
+        adjustSize = (size.x * 0.2f).toInt()
         lp = WindowManager.LayoutParams().apply {
             format = PixelFormat.RGBA_8888
             flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
@@ -60,9 +60,10 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
 
     fun getRect(): RectF {
         val rectF = cropView!!.getCropRectFInDisplay()
-        val width = 1080 * rectF.width() / 2
-        val height = 1920 * rectF.height() / 2
-        Log.i("AlDisplayService", "getRect. ${width}x${height}")
+        val width = size.x * rectF.width() / 2
+        val height = size.y * rectF.height() / 2
+        rectF.right = rectF.left + width / 16 * 32 / size.x.toFloat()
+        rectF.bottom = rectF.top + height / 16 * 32 / size.y.toFloat()
         return rectF
     }
 
