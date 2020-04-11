@@ -9,7 +9,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
-import android.support.annotation.RequiresApi
+import android.support.v4.app.NotificationCompat
+import android.support.v4.content.FileProvider
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
@@ -88,10 +89,33 @@ class AlDisplayService : Service() {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            setDataAndType(Uri.fromFile(File((path))), "video/mp4")
+            val uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                Uri.fromFile(File(path))
+            } else {
+                FileProvider.getUriForFile(
+                    baseContext,
+                    applicationContext.packageName + ".provider",
+                    File(path)
+                )
+            }
+            setDataAndType(uri, "video/mp4")
         }
         val nm = baseContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notification = Notification.Builder(this)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                N_CHANNEL_ID, N_CHANNEL_ID,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            channel.setSound(null, null)
+            channel.vibrationPattern = null
+            nm.createNotificationChannels(
+                listOf(
+                    channel
+                )
+            )
+        }
+        val notification = NotificationCompat.Builder(this, N_CHANNEL_ID)
             .setContentTitle("Screen record success")
             .setContentText("Click to show or edit.")
             .setSmallIcon(R.mipmap.ic_launcher)
@@ -105,29 +129,10 @@ class AlDisplayService : Service() {
                 flags = Notification.FLAG_AUTO_CANCEL
             }
         nm.notify(1, notification)
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-//        } else {
-//            showO()
-//        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun showO() {
-        val nm = baseContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(
-            "default", "Screen record",
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        channel.setSound(null, null)
-        channel.vibrationPattern = null
-        nm.createNotificationChannels(
-            listOf(
-                channel
-            )
-        )
     }
 
     companion object {
+        private const val N_CHANNEL_ID = "hwvc_screen_record"
         private var _instance: AlDisplayService? = null
         fun instance(): AlDisplayService? = _instance
     }
