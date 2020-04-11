@@ -3,10 +3,14 @@ package com.alimin.hwvc.screen.widget
 import android.content.Context
 import android.graphics.PixelFormat
 import android.graphics.Point
+import android.graphics.PointF
 import android.graphics.RectF
 import android.os.Build
-import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
+import android.widget.FrameLayout
 import com.alimin.hwvc.screen.R
 import com.lmy.hwvcnative.widget.AlCropView
 
@@ -20,6 +24,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     private var cropView: AlCropView? = null
     private var startBtn: View? = null
     private var closeBtn: View? = null
+    private var optLayout: View? = null
     private var adjustSize: Int = 0
 
     init {
@@ -43,14 +48,19 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         cropView = view?.findViewById(R.id.cropView)
         startBtn = view?.findViewById(R.id.startBtn)
         closeBtn = view?.findViewById(R.id.closeBtn)
+        optLayout = view?.findViewById(R.id.optLayout)
         startBtn?.setOnClickListener(this)
         closeBtn?.setOnClickListener(this)
         cropView?.setFixAlign(true)
+        cropView?.setOnChangeListener {
+            adjustOptLayout()
+        }
     }
 
     fun show() {
         view?.visibility = View.VISIBLE
         wm?.addView(view, lp)
+        view?.post { adjustOptLayout() }
     }
 
     fun dismiss() {
@@ -59,11 +69,11 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     }
 
     fun getRect(): RectF {
-        val rectF = cropView!!.getCropRectFInDisplay()
-        val width = size.x * rectF.width() / 2
-        val height = size.y * rectF.height() / 2
-        rectF.right = rectF.left + width / 16 * 32 / size.x.toFloat()
-        rectF.bottom = rectF.top + height / 16 * 32 / size.y.toFloat()
+        val rectF = cropView!!.getCropRectFInDisplay(true)
+//        val width = size.x * rectF.width() / 2
+//        val height = size.y * rectF.height() / 2
+//        rectF.right = rectF.left + width / 16 * 32 / size.x.toFloat()
+//        rectF.bottom = rectF.top + height / 16 * 32 / size.y.toFloat()
         return rectF
     }
 
@@ -79,24 +89,24 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         }
     }
 
-    private fun getLoc(v: View, event: MotionEvent): Int {
-        if (event.x >= 0 && event.x <= adjustSize && event.y >= 0 && event.y <= adjustSize) {
-            return LOC_LT
-        }
-        if (event.x <= v.width && v.width - event.x <= adjustSize && event.y >= 0 && event.y <= adjustSize) {
-            return LOC_RT
-        }
-        if (event.x <= v.width && v.width - event.x <= adjustSize
-            && event.y <= v.height && v.height - event.y <= adjustSize
-        ) {
-            return LOC_RB
-        }
-        if (event.x >= 0 && event.x <= adjustSize
-            && event.y <= v.height && v.height - event.y <= adjustSize
-        ) {
-            return LOC_LB
-        }
-        return LOC_IDL
+    private fun adjustOptLayout() {
+        val rectF = cropView!!.getCropRectF()
+        val point = PointF(
+            (rectF.right + 1f) * (cropView!!.measuredWidth / 2f),
+            (1f - rectF.bottom) * (cropView!!.measuredHeight / 2f)
+        )
+        point.x = point.x - optLayout!!.measuredWidth
+        point.y = point.y + 12
+        point.x = Math.max(0f, point.x)
+        point.y = Math.max(0f, point.y)
+        point.x = Math.min(cropView!!.measuredWidth.toFloat() - optLayout!!.measuredWidth, point.x)
+        point.y =
+            Math.min(cropView!!.measuredHeight.toFloat() - optLayout!!.measuredHeight, point.y)
+
+        val lp = optLayout!!.layoutParams as FrameLayout.LayoutParams
+        lp.leftMargin = point.x.toInt()
+        lp.topMargin = point.y.toInt()
+        optLayout!!.requestLayout()
     }
 
     private var onStartListener: (() -> Unit)? = null

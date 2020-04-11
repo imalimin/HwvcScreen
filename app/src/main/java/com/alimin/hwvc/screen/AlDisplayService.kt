@@ -101,7 +101,9 @@ class AlDisplayService : Service() {
                     PendingIntent.FLAG_CANCEL_CURRENT
                 )
             )
-            .build()
+            .build().apply {
+                flags = Notification.FLAG_AUTO_CANCEL
+            }
         nm.notify(1, notification)
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
 //        } else {
