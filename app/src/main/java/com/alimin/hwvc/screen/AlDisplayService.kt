@@ -9,11 +9,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.FileProvider
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
+import androidx.core.app.NotificationCompat
+import androidx.core.content.FileProvider
 import com.alimin.hwvc.screen.ui.ReqActivity
 import com.alimin.hwvc.screen.widget.FloatWindow
 import com.lmy.hwvcnative.processor.AlDisplayRecorder

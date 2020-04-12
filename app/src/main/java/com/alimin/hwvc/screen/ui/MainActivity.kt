@@ -6,7 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.alimin.hwvc.screen.AlDisplayService
 import com.alimin.hwvc.screen.R
 import kotlinx.android.synthetic.main.activity_main.*

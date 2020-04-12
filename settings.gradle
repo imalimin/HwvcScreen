@@ -4,4 +4,6 @@ include ':hwmvp'
 include ':AlFile'
 include(":hwvc")
 project(":hwvc").projectDir = new File("../hwvc/proj/hwvc_android/codec_native")
+include(":OfficeUIFabric")
+project(":OfficeUIFabric").projectDir = new File("./ui-fabric-android/OfficeUIFabric")
 rootProject.name='HwvcScreen'
