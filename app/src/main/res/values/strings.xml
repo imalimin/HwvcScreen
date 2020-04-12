@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">HwvcScreen</string>
     <string name="record_screen">录屏</string>
+    <string-array name="array_quality">
+        <item>低</item>
+        <item>中</item>
+        <item>高</item>
+    </string-array>
+    <string-array name="array_eff">
+        <item>高</item>
+        <item>中</item>
+        <item>低</item>
+    </string-array>
+    <string-array name="array_voice">
+        <item>静音</item>
+        <item>麦克风</item>
+    </string-array>
 </resources>

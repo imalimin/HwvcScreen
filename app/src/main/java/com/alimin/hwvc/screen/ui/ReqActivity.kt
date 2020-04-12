@@ -3,18 +3,15 @@ package com.alimin.hwvc.screen.ui
 import android.content.Context
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.alimin.hwvc.screen.AlDisplayService
 import com.alimin.hwvc.screen.R
+import com.lmy.common.ui.BaseActivity
 
-class ReqActivity : AppCompatActivity() {
+class ReqActivity : BaseActivity() {
+    override val layoutResID: Int = R.layout.activity_req
     private var mpm: MediaProjectionManager? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_req)
-
+    override fun initView() {
         mpm = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         val intent = mpm?.createScreenCaptureIntent()
         startActivityForResult(intent, REQ_PROJECTION)
