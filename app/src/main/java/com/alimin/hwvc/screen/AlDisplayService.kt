@@ -68,6 +68,11 @@ class AlDisplayService : Service() {
         return true
     }
 
+    fun shutdown() {
+        recorder?.release()
+        stopSelf()
+    }
+
     private fun setupView() {
         win = FloatWindow(this)
         win?.show()

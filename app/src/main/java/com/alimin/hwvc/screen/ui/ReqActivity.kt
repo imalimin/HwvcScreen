@@ -22,9 +22,11 @@ class ReqActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (RESULT_OK == resultCode) {
-            if (data != null && REQ_PROJECTION == requestCode) {
+        if (REQ_PROJECTION == requestCode) {
+            if (data != null && RESULT_OK == resultCode) {
                 AlDisplayService.instance()?.setup(mpm?.getMediaProjection(resultCode, data))
+            } else {
+                AlDisplayService.instance()?.shutdown()
             }
         }
         finish()
