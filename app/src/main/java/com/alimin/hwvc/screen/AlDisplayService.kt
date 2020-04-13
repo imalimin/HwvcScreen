@@ -16,11 +16,18 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import com.alimin.hwvc.screen.ui.ReqActivity
 import com.alimin.hwvc.screen.widget.FloatWindow
+import com.lmy.common.model.AlPreference
 import com.lmy.hwvcnative.processor.AlDisplayRecorder
 import java.io.File
 
 
 class AlDisplayService : Service() {
+    // 质量
+    private var pQuality by AlPreference(MyApplication.instance.applicationContext, "Quality", 2)
+    // 效率
+    private var pEff by AlPreference(MyApplication.instance.applicationContext, "Eff", 2)
+    // 声音
+    private var pVoice by AlPreference(MyApplication.instance.applicationContext, "Voice", 0)
     private var recorder: AlDisplayRecorder? = null
     private var win: FloatWindow? = null
     private lateinit var path: String
@@ -60,10 +67,8 @@ class AlDisplayService : Service() {
         recorder = AlDisplayRecorder(
             mp, size.x, size.y, DisplayMetrics.DENSITY_MEDIUM
         )
-        recorder?.setOutputFilePath(path)
-        recorder?.setFormat(1088, 1920)
+        setupParams()
         setupView()
-
         Log.i("AlDisplayService", "setup success. ${size.x}x${size.y}")
         return true
     }
@@ -71,6 +76,33 @@ class AlDisplayService : Service() {
     fun shutdown() {
         recorder?.release()
         stopSelf()
+    }
+
+    private fun setupParams() {
+        recorder?.setOutputFilePath(path)
+        recorder?.setFormat(1088, 1920)
+        when (pQuality) {
+            0 -> {
+                recorder?.setBitrate(1)
+            }
+            1 -> {
+                recorder?.setBitrate(3)
+            }
+            2 -> {
+                recorder?.setBitrate(5)
+            }
+        }
+        when (pEff) {
+            0 -> {
+                recorder?.setProfile("Baseline")
+            }
+            1 -> {
+                recorder?.setProfile("Main")
+            }
+            2 -> {
+                recorder?.setProfile("High")
+            }
+        }
     }
 
     private fun setupView() {

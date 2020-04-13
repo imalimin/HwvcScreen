@@ -94,13 +94,13 @@ class MainActivity : BasePreferenceActivity() {
         addItem(
             items,
             "质量",
-            "质量越高，文件越大",
+            "质量越高，文件越大，建议设置为<中>",
             resources.getStringArray(R.array.array_quality)[getQuality()]
         )
         addItem(
             items,
             "效率",
-            "在录制出现异常的情况下，可以尝试更高的效率设置，高效意味着更大的文件",
+            "在录制出现异常的情况下，可以尝试更高的效率，高效意味着更大的文件，同时也会影响视频质量，建议设置为<中>",
             resources.getStringArray(R.array.array_eff)[getEff()]
         )
         addItem(
