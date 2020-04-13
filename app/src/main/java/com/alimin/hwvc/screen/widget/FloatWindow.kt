@@ -34,7 +34,8 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         adjustSize = (size.x * 0.2f).toInt()
         lp = WindowManager.LayoutParams().apply {
             format = PixelFormat.RGBA_8888
-            flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            flags =
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_FULLSCREEN
             gravity = Gravity.LEFT.or(Gravity.TOP)
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
@@ -80,6 +81,14 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.startBtn -> {
+//                val loc = IntArray(2)
+//                cropView?.getLocationOnScreen(loc)
+//                val size = cropView!!.getCropSizeOfPixels()
+//                lp?.x = loc[0]
+//                lp?.y = loc[1]
+//                lp?.width = size.x
+//                lp?.height = size.y + optLayout!!.measuredHeight
+//                wm?.updateViewLayout(view, lp)
                 onStartListener?.invoke()
             }
             R.id.closeBtn -> {
