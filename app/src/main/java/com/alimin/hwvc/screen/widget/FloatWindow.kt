@@ -21,24 +21,24 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     private var lp: WindowManager.LayoutParams? = null
     private val size = Point()
 
-    private var cropView: AlCropView? = null
+    private var cropView: AlWinView? = null
     private var startBtn: View? = null
     private var closeBtn: View? = null
     private var optLayout: View? = null
     private var adjustSize: Int = 0
+    private var cropRectF: RectF? = null
 
     init {
         wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        wm.defaultDisplay.getRealSize(size)
+        wm?.defaultDisplay?.getRealSize(size)
         adjustSize = (size.x * 0.2f).toInt()
         lp = WindowManager.LayoutParams().apply {
             format = PixelFormat.RGBA_8888
             flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_FULLSCREEN
             gravity = Gravity.LEFT.or(Gravity.TOP)
-            width = WindowManager.LayoutParams.MATCH_PARENT
-            height = WindowManager.LayoutParams.MATCH_PARENT
+            width = size.x
+            height = size.x
             type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
@@ -52,16 +52,19 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         optLayout = view?.findViewById(R.id.optLayout)
         startBtn?.setOnClickListener(this)
         closeBtn?.setOnClickListener(this)
-        cropView?.setFixAlign(true)
         cropView?.setOnChangeListener {
-            adjustOptLayout()
+            val rectF = cropView!!.getCropRectF()
+            lp?.x = rectF.left.toInt()
+            lp?.y = rectF.top.toInt()
+            lp?.width = rectF.width().toInt()
+            lp?.height = rectF.height().toInt() + optLayout!!.measuredHeight
+            wm?.updateViewLayout(view!!, lp)
         }
     }
 
     fun show() {
         view?.visibility = View.VISIBLE
         wm?.addView(view, lp)
-        view?.post { adjustOptLayout() }
     }
 
     fun dismiss() {
@@ -69,18 +72,12 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         wm?.removeView(view)
     }
 
-    fun getRect(): RectF {
-        val rectF = cropView!!.getCropRectFInDisplay(true)
-//        val width = size.x * rectF.width() / 2
-//        val height = size.y * rectF.height() / 2
-//        rectF.right = rectF.left + width / 16 * 32 / size.x.toFloat()
-//        rectF.bottom = rectF.top + height / 16 * 32 / size.y.toFloat()
-        return rectF
-    }
+    fun getRect(): RectF = cropRectF!!
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.startBtn -> {
+//                cropRectF = cropView!!.getCropRectFInDisplay(true)
 //                val loc = IntArray(2)
 //                cropView?.getLocationOnScreen(loc)
 //                val size = cropView!!.getCropSizeOfPixels()
@@ -89,6 +86,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
 //                lp?.width = size.x
 //                lp?.height = size.y + optLayout!!.measuredHeight
 //                wm?.updateViewLayout(view, lp)
+//                cropView?.reset(true)
                 onStartListener?.invoke()
             }
             R.id.closeBtn -> {
