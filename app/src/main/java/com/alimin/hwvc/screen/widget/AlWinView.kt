@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import com.microsoft.officeuifabric.util.statusBarHeight
 
 class AlWinView : View {
     enum class Loc { LT, LB, RB, RT, C }
@@ -19,6 +20,7 @@ class AlWinView : View {
     private val lastTouchPointF = PointF()
     private val lt = PointF()
     private val rb = PointF()
+    private val dispSize = Point()
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -48,17 +50,20 @@ class AlWinView : View {
         paint.strokeWidth = strokeWidth
 
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val size = Point()
-        wm.defaultDisplay.getRealSize(size)
-        adjustSize = (size.x * 0.2f).toInt()
+        wm.defaultDisplay.getRealSize(dispSize)
+        adjustSize = (dispSize.x * 0.2f).toInt()
         post {
-            val loc = IntArray(2)
-            getLocationOnScreen(loc)
-            lt.x = loc[0].toFloat()
-            lt.y = loc[1].toFloat()
-            rb.x = lt.x + measuredWidth
-            rb.y = lt.y + measuredHeight
+            queryLoc()
         }
+    }
+
+    private fun queryLoc() {
+        val loc = IntArray(2)
+        getLocationOnScreen(loc)
+        lt.x = loc[0].toFloat()
+        lt.y = loc[1].toFloat()
+        rb.x = lt.x + measuredWidth
+        rb.y = lt.y + measuredHeight
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -69,17 +74,15 @@ class AlWinView : View {
                 return true
             }
             MotionEvent.ACTION_DOWN -> {
-                lastTouchPointF.set(event.x, event.y)
+                lastTouchPointF.set(event.rawX, event.rawY)
                 loc = getLoc(this, event)
-                Log.e("aliminabc", "ACTION_DOWN $loc")
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
                 if (null != loc) {
-                    Log.e("aliminabc", "ACTION_MOVE $loc")
-                    val dx = event.x - lastTouchPointF.x
-                    val dy = event.y - lastTouchPointF.y
-                    lastTouchPointF.set(event.x, event.y)
+                    val dx = event.rawX - lastTouchPointF.x
+                    val dy = event.rawY - lastTouchPointF.y
+                    lastTouchPointF.set(event.rawX, event.rawY)
                     when (loc) {
                         Loc.LT -> {
                             lt.offset(dx, dy)
@@ -96,15 +99,26 @@ class AlWinView : View {
                             rb.offset(0f, dy)
                         }
                         else -> {
-
+                            lt.offset(dx, dy)
+                            rb.offset(dx, dy)
                         }
                     }
+
+//                    checkBound()
                     onChangeListener?.invoke(this)
                     return true
                 }
             }
         }
         return ret
+    }
+
+    private fun checkBound() {
+        lt.x = Math.max(0f, lt.x)
+        lt.y = Math.max(0f, lt.y)
+
+        rb.x = Math.min(measuredWidth.toFloat(), rb.x)
+        rb.y = Math.min(measuredHeight.toFloat(), rb.y)
     }
 
     private fun getLoc(v: View, event: MotionEvent): Loc {
@@ -152,12 +166,35 @@ class AlWinView : View {
         )
     }
 
-    fun getCropRectF(): RectF = RectF(
+    private fun getRawCropRectF(): RectF = RectF(
         align16(lt.x.toInt()).toFloat(),
         align16(lt.y.toInt()).toFloat(),
         align16(rb.x.toInt()).toFloat(),
         align16(rb.y.toInt()).toFloat()
     )
+
+    fun getCropRectF(): RectF {
+        val rectF = getRawCropRectF()
+        val height = context.statusBarHeight
+        rectF.top -= height
+        rectF.bottom -= height
+        return rectF
+    }
+
+    fun getCropRectFNor(): RectF {
+        val rectF = getRawCropRectF()
+        Log.i("getCropRectFNor", "$rectF")
+        rectF.left = rectF.left / dispSize.x.toFloat()
+        rectF.top = rectF.top / dispSize.y.toFloat()
+        rectF.right = rectF.right / dispSize.x.toFloat()
+        rectF.bottom = rectF.bottom / dispSize.y.toFloat()
+
+        rectF.left = rectF.left * 2 - 1
+        rectF.top = 1 - rectF.top * 2
+        rectF.right = rectF.right * 2 - 1
+        rectF.bottom = 1 - rectF.bottom * 2
+        return rectF
+    }
 
     fun setOnChangeListener(listener: (view: View) -> Unit) {
         this.onChangeListener = listener
