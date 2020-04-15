@@ -80,7 +80,7 @@ class AlDisplayService : Service() {
 
     private fun setupParams() {
         recorder?.setOutputFilePath(path)
-        recorder?.setFormat(1088, 1920)
+        recorder?.setFormat(720, 1280)
         when (pQuality) {
             0 -> {
                 recorder?.setBitrate(1)

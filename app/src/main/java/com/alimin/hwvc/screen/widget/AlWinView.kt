@@ -167,10 +167,10 @@ class AlWinView : View {
     }
 
     private fun getRawCropRectF(): RectF = RectF(
-        align16(lt.x.toInt()).toFloat(),
-        align16(lt.y.toInt()).toFloat(),
-        align16(rb.x.toInt()).toFloat(),
-        align16(rb.y.toInt()).toFloat()
+        lt.x,
+        lt.y,
+        rb.x,
+        rb.y
     )
 
     fun getCropRectF(): RectF {
