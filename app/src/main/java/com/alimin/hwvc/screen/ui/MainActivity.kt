@@ -100,7 +100,7 @@ class MainActivity : BasePreferenceActivity() {
         addItem(
             items,
             "效率",
-            "在录制出现异常的情况下，可以尝试更高的效率，高效意味着更大的文件，同时也会影响视频质量，建议设置为<中>",
+            "如果录制出现掉帧，可以尝试更高的效率，高效意味着更大的文件，同时也会降低视频质量，建议设置为<中>",
             resources.getStringArray(R.array.array_eff)[getEff()]
         )
         addItem(

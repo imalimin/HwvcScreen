@@ -7,6 +7,7 @@
         <item>高</item>
     </string-array>
     <string-array name="array_eff">
+        <item>极高</item>
         <item>高</item>
         <item>中</item>
         <item>低</item>

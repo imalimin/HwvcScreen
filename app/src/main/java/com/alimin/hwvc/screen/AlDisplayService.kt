@@ -95,11 +95,15 @@ class AlDisplayService : Service() {
         when (pEff) {
             0 -> {
                 recorder?.setProfile("Baseline")
+                recorder?.setPreset("ultrafast")
             }
             1 -> {
-                recorder?.setProfile("Main")
+                recorder?.setProfile("Baseline")
             }
             2 -> {
+                recorder?.setProfile("Main")
+            }
+            3 -> {
                 recorder?.setProfile("High")
             }
         }
