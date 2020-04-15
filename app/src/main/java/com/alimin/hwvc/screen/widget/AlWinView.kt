@@ -21,6 +21,8 @@ class AlWinView : View {
     private val lt = PointF()
     private val rb = PointF()
     private val dispSize = Point()
+    private var minSize: Int = 128
+    private var statusBarHeight: Int = 0
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -46,12 +48,14 @@ class AlWinView : View {
     }
 
     private fun initialize() {
+        statusBarHeight = context.statusBarHeight
         paint.color = Color.LTGRAY
         paint.strokeWidth = strokeWidth
 
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         wm.defaultDisplay.getRealSize(dispSize)
-        adjustSize = (dispSize.x * 0.2f).toInt()
+        adjustSize = dispSize.x / 10
+        minSize = adjustSize * 3
         post {
             queryLoc()
         }
@@ -80,23 +84,37 @@ class AlWinView : View {
             }
             MotionEvent.ACTION_MOVE -> {
                 if (null != loc) {
-                    val dx = event.rawX - lastTouchPointF.x
-                    val dy = event.rawY - lastTouchPointF.y
+                    val minSize = this.minSize
+                    val delta = PointF(
+                        event.rawX - lastTouchPointF.x,
+                        event.rawY - lastTouchPointF.y
+                    )
                     lastTouchPointF.set(event.rawX, event.rawY)
+                    checkDelta(delta)
+                    val dx = delta.x
+                    val dy = delta.y
                     when (loc) {
                         Loc.LT -> {
                             lt.offset(dx, dy)
+                            lt.x = Math.min(lt.x, rb.x - minSize)
+                            lt.y = Math.min(lt.y, rb.y - minSize)
                         }
                         Loc.RT -> {
                             rb.offset(dx, 0f)
                             lt.offset(0f, dy)
+                            rb.x = Math.max(lt.x + minSize, rb.x)
+                            lt.y = Math.min(lt.y, rb.y - minSize)
                         }
                         Loc.RB -> {
                             rb.offset(dx, dy)
+                            rb.x = Math.max(lt.x + minSize, rb.x)
+                            rb.y = Math.max(lt.y + minSize, rb.y)
                         }
                         Loc.LB -> {
                             lt.offset(dx, 0f)
                             rb.offset(0f, dy)
+                            lt.x = Math.min(lt.x, rb.x - minSize)
+                            rb.y = Math.max(lt.y + minSize, rb.y)
                         }
                         else -> {
                             lt.offset(dx, dy)
@@ -104,7 +122,6 @@ class AlWinView : View {
                         }
                     }
 
-//                    checkBound()
                     onChangeListener?.invoke(this)
                     return true
                 }
@@ -113,12 +130,24 @@ class AlWinView : View {
         return ret
     }
 
-    private fun checkBound() {
-        lt.x = Math.max(0f, lt.x)
-        lt.y = Math.max(0f, lt.y)
-
-        rb.x = Math.min(measuredWidth.toFloat(), rb.x)
-        rb.y = Math.min(measuredHeight.toFloat(), rb.y)
+    private fun checkDelta(delta: PointF) {
+        val rect = RectF()
+        if (lt.x + delta.x < 0) {
+            rect.left = -lt.x
+        }
+        if (rb.x + delta.x > dispSize.x) {
+            rect.right = dispSize.x - rb.x
+        }
+        if (lt.y + delta.x < statusBarHeight) {
+            rect.top = statusBarHeight - lt.y
+        }
+        if (rb.y + delta.x > dispSize.y) {
+            rect.bottom = dispSize.y - rb.y
+        }
+        delta.x =
+            if (0f != rect.left) rect.left else if (0f != rect.right) rect.right else delta.x
+        delta.y =
+            if (0f != rect.top) rect.top else if (0f != rect.bottom) rect.bottom else delta.y
     }
 
     private fun getLoc(v: View, event: MotionEvent): Loc {
@@ -175,19 +204,18 @@ class AlWinView : View {
 
     fun getCropRectF(): RectF {
         val rectF = getRawCropRectF()
-        val height = context.statusBarHeight
-        rectF.top -= height
-        rectF.bottom -= height
+        rectF.top -= statusBarHeight
+        rectF.bottom -= statusBarHeight
         return rectF
     }
 
     fun getCropRectFNor(): RectF {
         val rectF = getRawCropRectF()
         Log.i("getCropRectFNor", "$rectF")
-        rectF.left = rectF.left / dispSize.x.toFloat()
-        rectF.top = rectF.top / dispSize.y.toFloat()
-        rectF.right = rectF.right / dispSize.x.toFloat()
-        rectF.bottom = rectF.bottom / dispSize.y.toFloat()
+        rectF.left = (rectF.left + strokeWidth / 2.0f) / dispSize.x.toFloat()
+        rectF.top = (rectF.top + strokeWidth / 2.0f) / dispSize.y.toFloat()
+        rectF.right = (rectF.right - strokeWidth / 2.0f) / dispSize.x.toFloat()
+        rectF.bottom = (rectF.bottom - strokeWidth / 2.0f) / dispSize.y.toFloat()
 
         rectF.left = rectF.left * 2 - 1
         rectF.top = 1 - rectF.top * 2
@@ -198,9 +226,5 @@ class AlWinView : View {
 
     fun setOnChangeListener(listener: (view: View) -> Unit) {
         this.onChangeListener = listener
-    }
-
-    companion object {
-        const val MIN_CROP_SIZE = 64
     }
 }
