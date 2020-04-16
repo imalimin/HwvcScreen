@@ -19,6 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".AlDisplayService" />
+        <receiver android:name=".MediaOperateReceiver">
+            <intent-filter>
+                <action android:name="media_start" />
+                <action android:name="media_stop" />
+                <action android:name="media_pause" />
+            </intent-filter>
+        </receiver>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

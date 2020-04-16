@@ -1,6 +1,7 @@
 package com.alimin.hwvc.screen
 
 import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Point
@@ -124,6 +125,11 @@ class AlDisplayService : Service() {
             showNotify()
             stopSelf()
         }
+        win?.setOnFullListener {
+            win?.dismiss()
+            showStopNotify()
+            recorder?.start()
+        }
     }
 
     private fun showNotify() {
@@ -157,8 +163,8 @@ class AlDisplayService : Service() {
             )
         }
         val notification = NotificationCompat.Builder(this, N_CHANNEL_ID)
-            .setContentTitle("Screen record success")
-            .setContentText("Click to show or edit.")
+            .setContentTitle("录屏成功")
+            .setContentText("点击播放")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(
                 PendingIntent.getActivity(
@@ -172,9 +178,61 @@ class AlDisplayService : Service() {
         nm.notify(1, notification)
     }
 
+    private fun showStopNotify() {
+        val nm = baseContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                N_CHANNEL_ID, N_CHANNEL_ID,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            channel.setSound(null, null)
+            channel.vibrationPattern = null
+            nm.createNotificationChannels(
+                listOf(
+                    channel
+                )
+            )
+        }
+        val intent = Intent(this, MediaOperateReceiver::class.java).apply {
+            action = "media_stop"
+        }
+        val notification = NotificationCompat.Builder(this, N_CHANNEL_ID)
+            .setContentTitle("录屏中")
+            .setContentText("点击停止")
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentIntent(
+                PendingIntent.getBroadcast(
+                    baseContext, 0, intent,
+                    PendingIntent.FLAG_CANCEL_CURRENT
+                )
+            )
+            .build().apply {
+                flags = Notification.FLAG_AUTO_CANCEL or Notification.FLAG_NO_CLEAR
+            }
+        nm.notify(MEDIA_OPERATE_ID, notification)
+    }
+
     companion object {
         private const val N_CHANNEL_ID = "hwvc_screen_record"
         private var _instance: AlDisplayService? = null
+        const val MEDIA_OPERATE_ID = 0x998
         fun instance(): AlDisplayService? = _instance
     }
+}
+
+class MediaOperateReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent) {
+        val nm = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        nm.cancel(AlDisplayService.MEDIA_OPERATE_ID)
+
+        if (intent.action == "media_start") {
+
+        } else if (intent.action == "media_stop") {
+            AlDisplayService.instance()?.shutdown()
+        } else if (intent.action == "media_pause") {
+
+        }
+    }
+
 }

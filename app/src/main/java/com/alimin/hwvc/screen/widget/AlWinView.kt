@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import com.alimin.hwvc.screen.R
 import com.microsoft.officeuifabric.util.statusBarHeight
 
 class AlWinView : View {
@@ -49,7 +50,7 @@ class AlWinView : View {
 
     private fun initialize() {
         statusBarHeight = context.statusBarHeight
-        paint.color = Color.LTGRAY
+        paint.color = resources.getColor(R.color.white_f2f)
         paint.strokeWidth = strokeWidth
 
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager

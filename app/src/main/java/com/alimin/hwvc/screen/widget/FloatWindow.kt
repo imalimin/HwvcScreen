@@ -1,9 +1,9 @@
 package com.alimin.hwvc.screen.widget
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.graphics.Point
-import android.graphics.PointF
 import android.graphics.RectF
 import android.os.Build
 import android.util.Log
@@ -11,9 +11,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.widget.FrameLayout
+import android.widget.CheckBox
+import androidx.core.view.ViewCompat
 import com.alimin.hwvc.screen.R
-import com.lmy.hwvcnative.widget.AlCropView
 
 
 class FloatWindow(private val ctx: Context) : View.OnClickListener {
@@ -23,7 +23,8 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     private val size = Point()
 
     private var cropView: AlWinView? = null
-    private var startBtn: View? = null
+    private var fullBtn: View? = null
+    private var recordBtn: CheckBox? = null
     private var closeBtn: View? = null
     private var optLayout: View? = null
     private var adjustSize: Int = 0
@@ -48,10 +49,11 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         view = LayoutInflater.from(ctx).inflate(R.layout.win_float, null)
         view?.keepScreenOn = true
         cropView = view?.findViewById(R.id.cropView)
-        startBtn = view?.findViewById(R.id.startBtn)
+        fullBtn = view?.findViewById(R.id.fullBtn)
+        recordBtn = view?.findViewById(R.id.recordBtn)
         closeBtn = view?.findViewById(R.id.closeBtn)
         optLayout = view?.findViewById(R.id.optLayout)
-        startBtn?.setOnClickListener(this)
+        fullBtn?.setOnClickListener(this)
         closeBtn?.setOnClickListener(this)
         cropView?.setOnChangeListener {
             val rectF = cropView!!.getCropRectF()
@@ -61,6 +63,15 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
             lp?.width = rectF.width().toInt()
             lp?.height = rectF.height().toInt() + optLayout!!.measuredHeight
             wm?.updateViewLayout(view!!, lp)
+        }
+        recordBtn?.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                ViewCompat.setBackgroundTintList(buttonView, ColorStateList.valueOf(0x7FEC5553))
+                onStartListener?.invoke()
+            } else {
+                onCloseListener?.invoke()
+                dismiss()
+            }
         }
     }
 
@@ -78,12 +89,12 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.startBtn -> {
-                onStartListener?.invoke()
-            }
             R.id.closeBtn -> {
                 onCloseListener?.invoke()
                 dismiss()
+            }
+            R.id.fullBtn -> {
+                onFullListener?.invoke()
             }
         }
     }
@@ -96,6 +107,11 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     private var onCloseListener: (() -> Unit)? = null
     fun setOnCloseListener(l: () -> Unit) {
         onCloseListener = l
+    }
+
+    private var onFullListener: (() -> Unit)? = null
+    fun setOnFullListener(l: () -> Unit) {
+        onFullListener = l
     }
 
     companion object {
