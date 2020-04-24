@@ -73,6 +73,9 @@ class AlWinView : View {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val ret = super.onTouchEvent(event)
+        if(!isClickable) {
+            return ret
+        }
         when (event.action) {
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                 loc = null

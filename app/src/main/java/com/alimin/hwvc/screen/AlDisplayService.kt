@@ -34,6 +34,7 @@ class AlDisplayService : Service() {
     private var recorder: AlDisplayRecorder? = null
     private var win: FloatWindow? = null
     private lateinit var path: String
+    private val displaySize = Point()
 
     override fun onCreate() {
         _instance = this
@@ -65,14 +66,13 @@ class AlDisplayService : Service() {
         recorder?.release()
         path = "${externalCacheDir.path}/camera.mp4"
         val wm = baseContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val size = Point()
-        wm.defaultDisplay.getRealSize(size)
+        wm.defaultDisplay.getRealSize(displaySize)
         recorder = AlDisplayRecorder(
-            mp, size.x, size.y, DisplayMetrics.DENSITY_MEDIUM
+            mp, displaySize.x, displaySize.y, DisplayMetrics.DENSITY_MEDIUM
         )
         setupParams()
         setupView()
-        Log.i("AlDisplayService", "setup success. ${size.x}x${size.y}")
+        Log.i("AlDisplayService", "setup success. ${displaySize.x}x${displaySize.y}")
         return true
     }
 
@@ -109,20 +109,24 @@ class AlDisplayService : Service() {
                 recorder?.setProfile("High")
             }
         }
-        when (pVoice) {
-            0 -> {
-                recorder?.setFormat(720, 1280, 0)
-            }
-            1 -> {
-                recorder?.setFormat(720, 1280)
-            }
-        }
+        val size = displaySize
         when (pCodec) {
             0 -> {
                 recorder?.setEnableHardware(true)
             }
             1 -> {
                 recorder?.setEnableHardware(false)
+                //软编限制分辨率
+                size.x = 720
+                size.y = 1280
+            }
+        }
+        when (pVoice) {
+            0 -> {
+                recorder?.setFormat(size.x, size.y, 0)
+            }
+            1 -> {
+                recorder?.setFormat(size.x, size.y)
             }
         }
     }
@@ -131,6 +135,7 @@ class AlDisplayService : Service() {
         win = FloatWindow(this)
         win?.show()
         win?.setOnStartListener {
+            win?.setClickable(false)
             recorder?.cropOutputSize(win!!.getRect())
             Handler().postDelayed({
                 recorder?.start()

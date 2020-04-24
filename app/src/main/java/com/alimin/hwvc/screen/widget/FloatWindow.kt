@@ -135,6 +135,10 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         onFullListener = l
     }
 
+    fun setClickable(enable: Boolean) {
+        cropView?.isClickable = enable
+    }
+
     companion object {
         const val LOC_IDL = 0
         const val LOC_LT = 1
