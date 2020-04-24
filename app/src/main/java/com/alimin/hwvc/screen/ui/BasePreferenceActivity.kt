@@ -14,6 +14,8 @@ abstract class BasePreferenceActivity : BaseActivity() {
     private var pEff by AlPreference(MyApplication.instance.applicationContext, "Eff", 2)
     // 声音
     private var pVoice by AlPreference(MyApplication.instance.applicationContext, "Voice", 0)
+    // 编码方式
+    private var pCodec by AlPreference(MyApplication.instance.applicationContext, "Codec", 0)
 
     fun getQuality(): Int = pQuality
     fun setQuality(value: Int) {
@@ -28,6 +30,11 @@ abstract class BasePreferenceActivity : BaseActivity() {
     fun getVoice(): Int = pVoice
     fun setVoice(value: Int) {
         pVoice = value
+    }
+
+    fun getCodec(): Int = pCodec
+    fun setCodec(value: Int) {
+        pCodec = value
     }
 
     fun showPopupMenu(

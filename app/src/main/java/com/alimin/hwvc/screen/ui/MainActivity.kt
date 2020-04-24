@@ -66,6 +66,13 @@ class MainActivity : BasePreferenceActivity() {
                     }
                 }
                 3 -> {
+                    showPopupMenu(v, resources.getStringArray(R.array.array_encode_type)) {
+                        (adapter.items[position] as ArrayList<String>)[2] = it.title
+                        setCodec(it.id)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+                4 -> {
                     showPopupMenu(v, resources.getStringArray(R.array.array_voice)) {
                         (adapter.items[position] as ArrayList<String>)[2] = it.title
                         setVoice(it.id)
@@ -102,6 +109,12 @@ class MainActivity : BasePreferenceActivity() {
             "效率",
             "如果录制出现掉帧，可以尝试更高的效率，高效意味着更大的文件，同时也会降低视频质量，建议设置为<中>",
             resources.getStringArray(R.array.array_eff)[getEff()]
+        )
+        addItem(
+            items,
+            "编码方式",
+            "硬编效率最高，软编兼容性最好，如果硬编出问题可以尝试软编，否则建议设置为<硬编>",
+            resources.getStringArray(R.array.array_encode_type)[getCodec()]
         )
         addItem(
             items,

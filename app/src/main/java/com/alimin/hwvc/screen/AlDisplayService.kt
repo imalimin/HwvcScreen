@@ -29,6 +29,8 @@ class AlDisplayService : Service() {
     private var pEff by AlPreference(MyApplication.instance.applicationContext, "Eff", 2)
     // 声音
     private var pVoice by AlPreference(MyApplication.instance.applicationContext, "Voice", 0)
+    // 编码方式
+    private var pCodec by AlPreference(MyApplication.instance.applicationContext, "Codec", 0)
     private var recorder: AlDisplayRecorder? = null
     private var win: FloatWindow? = null
     private lateinit var path: String
@@ -81,7 +83,6 @@ class AlDisplayService : Service() {
 
     private fun setupParams() {
         recorder?.setOutputFilePath(path)
-        recorder?.setFormat(720, 1280)
         when (pQuality) {
             0 -> {
                 recorder?.setBitrate(1)
@@ -106,6 +107,22 @@ class AlDisplayService : Service() {
             }
             3 -> {
                 recorder?.setProfile("High")
+            }
+        }
+        when (pVoice) {
+            0 -> {
+                recorder?.setFormat(720, 1280, 0)
+            }
+            1 -> {
+                recorder?.setFormat(720, 1280)
+            }
+        }
+        when (pCodec) {
+            0 -> {
+                recorder?.setEnableHardware(true)
+            }
+            1 -> {
+                recorder?.setEnableHardware(false)
             }
         }
     }

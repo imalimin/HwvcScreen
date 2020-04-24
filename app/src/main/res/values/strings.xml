@@ -16,4 +16,8 @@
         <item>静音</item>
         <item>麦克风</item>
     </string-array>
+    <string-array name="array_encode_type">
+        <item>硬编</item>
+        <item>软编</item>
+    </string-array>
 </resources>
