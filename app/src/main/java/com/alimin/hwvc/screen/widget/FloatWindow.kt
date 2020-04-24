@@ -1,7 +1,8 @@
 package com.alimin.hwvc.screen.widget
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.graphics.RectF
@@ -11,8 +12,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.CycleInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.widget.CheckBox
-import androidx.core.view.ViewCompat
 import com.alimin.hwvc.screen.R
 
 
@@ -28,6 +32,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     private var closeBtn: View? = null
     private var optLayout: View? = null
     private var adjustSize: Int = 0
+    private var animator: ValueAnimator? = null
 
     init {
         wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -66,13 +71,28 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         }
         recordBtn?.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                ViewCompat.setBackgroundTintList(buttonView, ColorStateList.valueOf(0x7FEC5553))
+                closeBtn?.isClickable = false
+                fullBtn?.isClickable = false
+                flash()
                 onStartListener?.invoke()
             } else {
                 onCloseListener?.invoke()
                 dismiss()
             }
         }
+    }
+
+    private fun flash() {
+        animator = ValueAnimator.ofFloat(1f, 0.5f).apply {
+            interpolator = AccelerateDecelerateInterpolator()
+            repeatCount = 10000
+            repeatMode = ValueAnimator.REVERSE
+            duration = 1000
+            addUpdateListener {
+                recordBtn?.alpha = it.animatedValue as Float
+            }
+        }
+        animator?.start()
     }
 
     fun show() {
@@ -83,6 +103,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     fun dismiss() {
         view?.visibility = View.GONE
         wm?.removeView(view)
+        animator?.cancel()
     }
 
     fun getRect(): RectF = cropView!!.getCropRectFNor()
