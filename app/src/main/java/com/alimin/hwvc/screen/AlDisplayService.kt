@@ -212,32 +212,13 @@ class AlDisplayService : Service() {
             .setLargeIcon(bitmap)
             .setStyle(NotificationCompat.BigPictureStyle().bigPicture(bitmap))
             .setContentIntent(pendingIntent)
-            .addAction(0, resources.getString(R.string.action_edit), pendingIntent)
-            .addAction(
-                0, resources.getString(R.string.action_delete),
-                PendingIntent.getBroadcast(
-                    baseContext, 0, Intent(this, MediaOperateReceiver::class.java).apply {
-                        action = "media_delete"
-                        data = Uri.fromFile(File(path))
-                    },
-                    PendingIntent.FLAG_CANCEL_CURRENT
-                )
-            )
-            .addAction(
-                0, resources.getString(R.string.action_share),
-                PendingIntent.getBroadcast(
-                    baseContext, 0, Intent(this, MediaOperateReceiver::class.java).apply {
-                        action = "media_share"
-                        data = Uri.fromFile(File(path))
-                    },
-                    PendingIntent.FLAG_CANCEL_CURRENT
-                )
-            )
+            .addAction(newEditAction(pendingIntent))
+            .addAction(newDeleteAction())
+            .addAction(newShareAction())
             .build().apply {
                 flags = Notification.FLAG_AUTO_CANCEL
             }
         nm.notify(NOTIFY_DONE_ID, notification)
-
     }
 
     private fun showDoneNotify() {
@@ -292,6 +273,44 @@ class AlDisplayService : Service() {
         nm.notify(NOTIFY_RECORDING_ID, notification)
     }
 
+    private fun newEditAction(intent: PendingIntent): NotificationCompat.Action =
+        NotificationCompat.Action(0, resources.getString(R.string.action_edit), intent)
+
+    private fun newDeleteAction(): NotificationCompat.Action = NotificationCompat.Action(
+        0, resources.getString(R.string.action_delete),
+        PendingIntent.getBroadcast(
+            baseContext, 0, Intent(this, MediaOperateReceiver::class.java).apply {
+                action = "media_delete"
+                data = Uri.fromFile(File(path))
+            },
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
+    )
+
+    private fun newShareAction(): NotificationCompat.Action = NotificationCompat.Action(
+        0, resources.getString(R.string.action_share),
+        PendingIntent.getActivity(
+            baseContext, 0, Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
+                type = "video/*"
+                putExtra(
+                    Intent.EXTRA_STREAM, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        FileProvider.getUriForFile(
+                            applicationContext,
+                            "${applicationContext.packageName}.provider",
+                            File(path)
+                        )
+                    } else {
+                        Uri.fromFile(File(path))
+                    }
+                )
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }, applicationContext.resources.getString(R.string.action_share)).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            },
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
+    )
+
     companion object {
         private const val N_CHANNEL_ID = "hwvc_screen_record"
         private var _instance: AlDisplayService? = null
@@ -337,23 +356,6 @@ class MediaOperateReceiver : BroadcastReceiver() {
                     if (ret > 0) {
                         file.delete()
                     }
-                } else if (intent.action == "media_share") {
-                    Log.i("alimin123", context.packageName)
-                    context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
-                        type = "video/*"
-                        setDataAndType(
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                FileProvider.getUriForFile(
-                                    context,
-                                    "${context.packageName}.provider",
-                                    file
-                                )
-                            } else {
-                                Uri.fromFile(file)
-                            }, "video/*"
-                        )
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }, context.resources.getString(R.string.action_share)))
                 }
             }
         }
