@@ -174,7 +174,7 @@ class AlDisplayService : Service() {
     private fun showDoneNotify(bitmap: Bitmap) {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
             val uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
                 Uri.fromFile(File(path))
             } else {
@@ -185,6 +185,7 @@ class AlDisplayService : Service() {
                 )
             }
             setDataAndType(uri, "video/mp4")
+            putExtra(Intent.EXTRA_STREAM, uri)
         }
         val pendingIntent = PendingIntent.getActivity(
             baseContext, 0, intent,
