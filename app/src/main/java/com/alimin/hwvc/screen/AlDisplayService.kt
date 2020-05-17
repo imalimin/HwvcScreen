@@ -14,6 +14,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
+import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
@@ -94,15 +95,7 @@ class AlDisplayService : Service() {
 
     fun shutdown() {
         recorder?.release()
-        MediaScannerConnection.scanFile(
-            this,
-            Array(1) { path },
-            Array(1) { MediaStore.Video.Media.CONTENT_TYPE }
-        ) { _: String, uri: Uri ->
-            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-            mediaScanIntent.data = uri
-            sendBroadcast(mediaScanIntent)
-        }
+        mediaNotify(applicationContext, path)
         showDoneNotify()
         stopSelf()
     }
@@ -193,6 +186,10 @@ class AlDisplayService : Service() {
             }
             setDataAndType(uri, "video/mp4")
         }
+        val pendingIntent = PendingIntent.getActivity(
+            baseContext, 0, intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
         val nm = baseContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -212,19 +209,34 @@ class AlDisplayService : Service() {
             .setContentTitle("录屏成功")
             .setContentText("点击播放")
             .setSmallIcon(R.mipmap.ic_media_play)
-            .setStyle(
-                NotificationCompat.BigPictureStyle().bigPicture(bitmap)
+            .setLargeIcon(bitmap)
+            .setStyle(NotificationCompat.BigPictureStyle().bigPicture(bitmap))
+            .setContentIntent(pendingIntent)
+            .addAction(0, resources.getString(R.string.action_edit), pendingIntent)
+            .addAction(
+                0, resources.getString(R.string.action_delete),
+                PendingIntent.getBroadcast(
+                    baseContext, 0, Intent(this, MediaOperateReceiver::class.java).apply {
+                        action = "media_delete"
+                        data = Uri.fromFile(File(path))
+                    },
+                    PendingIntent.FLAG_CANCEL_CURRENT
+                )
             )
-            .setContentIntent(
-                PendingIntent.getActivity(
-                    baseContext, 0, intent,
+            .addAction(
+                0, resources.getString(R.string.action_share),
+                PendingIntent.getBroadcast(
+                    baseContext, 0, Intent(this, MediaOperateReceiver::class.java).apply {
+                        action = "media_share"
+                        data = Uri.fromFile(File(path))
+                    },
                     PendingIntent.FLAG_CANCEL_CURRENT
                 )
             )
             .build().apply {
                 flags = Notification.FLAG_AUTO_CANCEL
             }
-        nm.notify(1, notification)
+        nm.notify(NOTIFY_DONE_ID, notification)
 
     }
 
@@ -277,29 +289,73 @@ class AlDisplayService : Service() {
                 flags =
                     Notification.FLAG_AUTO_CANCEL or Notification.FLAG_NO_CLEAR or Notification.FLAG_SHOW_LIGHTS
             }
-        nm.notify(MEDIA_OPERATE_ID, notification)
+        nm.notify(NOTIFY_RECORDING_ID, notification)
     }
 
     companion object {
         private const val N_CHANNEL_ID = "hwvc_screen_record"
         private var _instance: AlDisplayService? = null
-        const val MEDIA_OPERATE_ID = 0x998
+        const val NOTIFY_RECORDING_ID = 0x998
+        const val NOTIFY_DONE_ID = NOTIFY_RECORDING_ID - 1
         fun instance(): AlDisplayService? = _instance
+
+        fun mediaNotify(context: Context, path: String) {
+            MediaScannerConnection.scanFile(
+                context,
+                Array(1) { path },
+                Array(1) { MediaStore.Video.Media.CONTENT_TYPE }
+            ) { _: String, uri: Uri ->
+                val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                mediaScanIntent.data = uri
+                context.sendBroadcast(mediaScanIntent)
+            }
+        }
     }
 }
 
 class MediaOperateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent) {
         val nm = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        nm.cancel(AlDisplayService.MEDIA_OPERATE_ID)
 
         if (intent.action == "media_start") {
 
         } else if (intent.action == "media_stop") {
+            nm.cancel(AlDisplayService.NOTIFY_RECORDING_ID)
             AlDisplayService.instance()?.shutdown()
         } else if (intent.action == "media_pause") {
 
+        } else {
+            nm.cancel(AlDisplayService.NOTIFY_DONE_ID)
+            val path = intent.data?.path
+            if (!TextUtils.isEmpty(path)) {
+                val file = File(path)
+                if (intent.action == "media_delete") {
+                    val ret = context.contentResolver.delete(
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                        MediaStore.Audio.Media.DATA + "= \"${path}\"", null
+                    )
+                    if (ret > 0) {
+                        file.delete()
+                    }
+                } else if (intent.action == "media_share") {
+                    Log.i("alimin123", context.packageName)
+                    context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
+                        type = "video/*"
+                        setDataAndType(
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                FileProvider.getUriForFile(
+                                    context,
+                                    "${context.packageName}.provider",
+                                    file
+                                )
+                            } else {
+                                Uri.fromFile(file)
+                            }, "video/*"
+                        )
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }, context.resources.getString(R.string.action_share)))
+                }
+            }
         }
     }
-
 }

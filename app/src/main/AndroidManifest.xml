@@ -24,6 +24,8 @@
                 <action android:name="media_start" />
                 <action android:name="media_stop" />
                 <action android:name="media_pause" />
+                <action android:name="media_delete" />
+                <action android:name="media_share" />
             </intent-filter>
         </receiver>
         <provider
