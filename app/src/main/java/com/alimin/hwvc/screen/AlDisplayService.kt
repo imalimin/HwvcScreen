@@ -4,6 +4,7 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Point
 import android.media.MediaScannerConnection
 import android.media.projection.MediaProjection
@@ -20,6 +21,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import com.alimin.hwvc.screen.ui.ReqActivity
 import com.alimin.hwvc.screen.widget.FloatWindow
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.lmy.common.model.AlPreference
 import com.lmy.hwvcnative.processor.AlDisplayRecorder
 import java.io.File
@@ -173,7 +178,7 @@ class AlDisplayService : Service() {
         }
     }
 
-    private fun showDoneNotify() {
+    private fun showDoneNotify(bitmap: Bitmap) {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -207,6 +212,9 @@ class AlDisplayService : Service() {
             .setContentTitle("录屏成功")
             .setContentText("点击播放")
             .setSmallIcon(R.mipmap.ic_media_play)
+            .setStyle(
+                NotificationCompat.BigPictureStyle().bigPicture(bitmap)
+            )
             .setContentIntent(
                 PendingIntent.getActivity(
                     baseContext, 0, intent,
@@ -217,6 +225,23 @@ class AlDisplayService : Service() {
                 flags = Notification.FLAG_AUTO_CANCEL
             }
         nm.notify(1, notification)
+
+    }
+
+    private fun showDoneNotify() {
+        val target = object : SimpleTarget<Bitmap>(displaySize.x, displaySize.x) {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                showDoneNotify(resource)
+            }
+        }
+        Glide.with(applicationContext)
+            .setDefaultRequestOptions(RequestOptions().apply {
+                frame(0)
+                centerCrop()
+            })
+            .asBitmap()
+            .load(path)
+            .into(target)
     }
 
     private fun showStopNotify() {
@@ -249,7 +274,8 @@ class AlDisplayService : Service() {
                 )
             )
             .build().apply {
-                flags = Notification.FLAG_AUTO_CANCEL or Notification.FLAG_NO_CLEAR or Notification.FLAG_SHOW_LIGHTS
+                flags =
+                    Notification.FLAG_AUTO_CANCEL or Notification.FLAG_NO_CLEAR or Notification.FLAG_SHOW_LIGHTS
             }
         nm.notify(MEDIA_OPERATE_ID, notification)
     }
