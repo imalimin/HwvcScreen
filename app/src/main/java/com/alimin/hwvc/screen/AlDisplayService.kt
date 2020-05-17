@@ -5,11 +5,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Point
+import android.media.MediaScannerConnection
 import android.media.projection.MediaProjection
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
@@ -20,6 +23,8 @@ import com.alimin.hwvc.screen.widget.FloatWindow
 import com.lmy.common.model.AlPreference
 import com.lmy.hwvcnative.processor.AlDisplayRecorder
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class AlDisplayService : Service() {
@@ -35,6 +40,7 @@ class AlDisplayService : Service() {
     private var win: FloatWindow? = null
     private lateinit var path: String
     private val displaySize = Point()
+    private val formatter = SimpleDateFormat("yyyMMdd-HHmmss")
 
     override fun onCreate() {
         _instance = this
@@ -64,7 +70,12 @@ class AlDisplayService : Service() {
             return false
         }
         recorder?.release()
-        path = "${externalCacheDir.path}/camera.mp4"
+        val dir = File("${Environment.getExternalStorageDirectory().path}/Screen recordings")
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
+        val c = Calendar.getInstance().apply { timeInMillis = System.currentTimeMillis() }
+        path = "${dir.path}/${formatter.format(c.time)}.mp4"
         val wm = baseContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         wm.defaultDisplay.getRealSize(displaySize)
         recorder = AlDisplayRecorder(
@@ -78,6 +89,16 @@ class AlDisplayService : Service() {
 
     fun shutdown() {
         recorder?.release()
+        MediaScannerConnection.scanFile(
+            this,
+            Array(1) { path },
+            Array(1) { MediaStore.Video.Media.CONTENT_TYPE }
+        ) { _: String, uri: Uri ->
+            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+            mediaScanIntent.data = uri
+            sendBroadcast(mediaScanIntent)
+        }
+        showDoneNotify()
         stopSelf()
     }
 
@@ -143,9 +164,7 @@ class AlDisplayService : Service() {
         }
         win?.setOnCloseListener {
             win?.dismiss()
-            recorder?.release()
-            showNotify()
-            stopSelf()
+            shutdown()
         }
         win?.setOnFullListener {
             win?.dismiss()
@@ -154,7 +173,7 @@ class AlDisplayService : Service() {
         }
     }
 
-    private fun showNotify() {
+    private fun showDoneNotify() {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -187,7 +206,7 @@ class AlDisplayService : Service() {
         val notification = NotificationCompat.Builder(this, N_CHANNEL_ID)
             .setContentTitle("录屏成功")
             .setContentText("点击播放")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.mipmap.ic_media_play)
             .setContentIntent(
                 PendingIntent.getActivity(
                     baseContext, 0, intent,
@@ -222,7 +241,7 @@ class AlDisplayService : Service() {
         val notification = NotificationCompat.Builder(this, N_CHANNEL_ID)
             .setContentTitle("录屏中")
             .setContentText("点击停止")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.mipmap.ic_media_play)
             .setContentIntent(
                 PendingIntent.getBroadcast(
                     baseContext, 0, intent,
