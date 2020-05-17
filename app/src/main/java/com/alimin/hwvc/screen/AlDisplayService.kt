@@ -241,7 +241,7 @@ class AlDisplayService : Service() {
         val notification = NotificationCompat.Builder(this, N_CHANNEL_ID)
             .setContentTitle("录屏中")
             .setContentText("点击停止")
-            .setSmallIcon(R.mipmap.ic_media_play)
+            .setSmallIcon(R.drawable.ic_recording)
             .setContentIntent(
                 PendingIntent.getBroadcast(
                     baseContext, 0, intent,
@@ -249,7 +249,7 @@ class AlDisplayService : Service() {
                 )
             )
             .build().apply {
-                flags = Notification.FLAG_AUTO_CANCEL or Notification.FLAG_NO_CLEAR
+                flags = Notification.FLAG_AUTO_CANCEL or Notification.FLAG_NO_CLEAR or Notification.FLAG_SHOW_LIGHTS
             }
         nm.notify(MEDIA_OPERATE_ID, notification)
     }

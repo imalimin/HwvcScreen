@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@mipmap/ic_media_play"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a1"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a2"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a3"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a4"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a5"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a4"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a3"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a2"
+        android:duration="100" />
+    <item
+        android:drawable="@mipmap/ic_media_play_a1"
+        android:duration="100" />
+</animation-list>
