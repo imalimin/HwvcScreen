@@ -37,18 +37,23 @@ class MainActivity : BasePreferenceActivity() {
             val v = view!!.findViewById<View>(R.id.valueView)
             when (position) {
                 0 -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
-                            this
-                        )
-                    ) {
-                        startActivityForResult(
-                            Intent(
-                                ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:$packageName")
-                            ), 0x02
-                        )
+                    if (AlDisplayService.isRecording()) {
+                        AlDisplayService.instance()?.shutdown()
+//                        setup()
                     } else {
-                        startService(Intent(this@MainActivity, AlDisplayService::class.java))
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
+                                this
+                            )
+                        ) {
+                            startActivityForResult(
+                                Intent(
+                                    ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:$packageName")
+                                ), 0x02
+                            )
+                        } else {
+                            startService(Intent(this@MainActivity, AlDisplayService::class.java))
+                        }
                     }
                 }
                 1 -> {
@@ -97,7 +102,11 @@ class MainActivity : BasePreferenceActivity() {
 
     private fun setup() {
         val items = ArrayList<List<String>>()
-        addItem(items, "开始录屏", "立即开始录屏", "")
+        if (AlDisplayService.isRecording()) {
+            addItem(items, "正在录屏中", "点击立即停止录屏", "")
+        } else {
+            addItem(items, "开始录屏", "点击立即开始录屏", "")
+        }
         addItem(
             items,
             "质量",
@@ -122,6 +131,7 @@ class MainActivity : BasePreferenceActivity() {
             "旋转录制麦克风或者内置音频",
             resources.getStringArray(R.array.array_voice)[getVoice()]
         )
+        adapter.clear()
         adapter.bindData(items)
         adapter.notifyDataSetChanged()
     }

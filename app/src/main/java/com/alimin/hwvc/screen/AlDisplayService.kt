@@ -47,6 +47,7 @@ class AlDisplayService : Service() {
     private lateinit var path: String
     private val displaySize = Point()
     private val formatter = SimpleDateFormat("yyyMMdd-HHmmss")
+    private var isRecording = false
 
     override fun onCreate() {
         _instance = this
@@ -157,6 +158,7 @@ class AlDisplayService : Service() {
             win?.setClickable(false)
             recorder?.cropOutputSize(win!!.getRect())
             Handler().postDelayed({
+                isRecording = true
                 recorder?.start()
             }, 1000)
         }
@@ -167,6 +169,7 @@ class AlDisplayService : Service() {
         win?.setOnFullListener {
             win?.dismiss()
             showStopNotify()
+            isRecording = true
             recorder?.start()
         }
     }
@@ -318,6 +321,8 @@ class AlDisplayService : Service() {
         const val NOTIFY_RECORDING_ID = 0x998
         const val NOTIFY_DONE_ID = NOTIFY_RECORDING_ID - 1
         fun instance(): AlDisplayService? = _instance
+
+        fun isRecording(): Boolean = null != instance() && instance()!!.isRecording
 
         fun mediaNotify(context: Context, path: String) {
             MediaScannerConnection.scanFile(
