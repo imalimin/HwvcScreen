@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HwvcScreen</string>
+    <string name="app_name">超级录屏助手</string>
     <string name="record_screen">录屏</string>
     <string name="action_delete">删除</string>
     <string name="action_edit">编辑</string>
