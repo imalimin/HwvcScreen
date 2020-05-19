@@ -4,6 +4,8 @@
     <string name="action_delete">删除</string>
     <string name="action_edit">编辑</string>
     <string name="action_share">分享</string>
+    <string name="handle_on_notification">录屏控制通知</string>
+    <string name="id_handle_on_notification">id_handle</string>
     <string-array name="array_quality">
         <item>低</item>
         <item>中</item>

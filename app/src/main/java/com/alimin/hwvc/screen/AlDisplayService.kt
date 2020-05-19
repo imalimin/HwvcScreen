@@ -198,18 +198,18 @@ class AlDisplayService : Service() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                N_CHANNEL_ID, N_CHANNEL_ID,
+                resources.getString(R.string.id_handle_on_notification),
+                resources.getString(R.string.handle_on_notification),
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             channel.setSound(null, null)
             channel.vibrationPattern = null
-            nm.createNotificationChannels(
-                listOf(
-                    channel
-                )
-            )
+            nm.createNotificationChannel(channel)
         }
-        val notification = NotificationCompat.Builder(this, N_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(
+            this,
+            resources.getString(R.string.id_handle_on_notification)
+        )
             .setContentTitle("录屏成功")
             .setContentText("点击播放")
             .setSmallIcon(R.mipmap.ic_media_play)
@@ -242,25 +242,29 @@ class AlDisplayService : Service() {
     }
 
     private fun showStopNotify() {
-        val nm = baseContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val nm =
+            baseContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                N_CHANNEL_ID, N_CHANNEL_ID,
+                resources.getString(R.string.id_handle_on_notification),
+                resources.getString(R.string.handle_on_notification),
                 NotificationManager.IMPORTANCE_DEFAULT
-            )
-            channel.setSound(null, null)
-            channel.vibrationPattern = null
-            nm.createNotificationChannels(
-                listOf(
-                    channel
-                )
-            )
+            ).apply {
+                description = resources.getString(R.string.id_handle_on_notification)
+                setSound(null, null)
+                vibrationPattern = null
+            }
+            nm.createNotificationChannel(channel)
         }
         val intent = Intent(this, MediaOperateReceiver::class.java).apply {
             action = "media_stop"
         }
-        val notification = NotificationCompat.Builder(this, N_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(
+            this,
+            resources.getString(R.string.id_handle_on_notification)
+        )
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentTitle("录屏中")
             .setContentText("点击停止")
             .setSmallIcon(R.drawable.ic_recording)
@@ -316,7 +320,6 @@ class AlDisplayService : Service() {
     )
 
     companion object {
-        private const val N_CHANNEL_ID = "hwvc_screen_record"
         private var _instance: AlDisplayService? = null
         const val NOTIFY_RECORDING_ID = 0x998
         const val NOTIFY_DONE_ID = NOTIFY_RECORDING_ID - 1
