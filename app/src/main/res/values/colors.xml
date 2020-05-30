@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/uifabric_communication_blue</color>
-    <color name="colorPrimaryDark">@color/uifabric_communication_shade_20</color>
-    <color name="colorAccent">@color/uifabric_communication_blue</color>
+    <color name="colorPrimary">#c41616</color>
+    <color name="colorPrimaryDark">#a71313</color>
+    <color name="colorAccent">#c41616</color>
 </resources>

@@ -25,6 +25,7 @@ class MainActivity : BasePreferenceActivity() {
     private val adapter = SettingsAdapter()
 
     override fun initView() {
+        setDarkStatusBar()
         setSupportActionBar(toolbar)
         toolbar.subtitle = BuildConfig.VERSION_NAME
         if (!PermissionHelper.requestPermissions(this, PermissionHelper.PERMISSIONS_BASE))
