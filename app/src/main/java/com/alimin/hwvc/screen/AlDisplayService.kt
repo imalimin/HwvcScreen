@@ -98,6 +98,7 @@ class AlDisplayService : Service() {
         recorder?.release()
         mediaNotify(applicationContext, path)
         showDoneNotify()
+        isRecording = false
         stopSelf()
     }
 
@@ -153,6 +154,7 @@ class AlDisplayService : Service() {
 
     private fun setupView() {
         win = FloatWindow(this)
+        win?.setClickable(true)
         win?.show()
         win?.setOnStartListener {
             win?.setClickable(false)
@@ -323,7 +325,9 @@ class AlDisplayService : Service() {
         private var _instance: AlDisplayService? = null
         const val NOTIFY_RECORDING_ID = 0x998
         const val NOTIFY_DONE_ID = NOTIFY_RECORDING_ID - 1
-        fun instance(): AlDisplayService? = _instance
+        fun instance(): AlDisplayService? {
+            return _instance
+        }
 
         fun isRecording(): Boolean = null != instance() && instance()!!.isRecording
 

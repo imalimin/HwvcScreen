@@ -50,7 +50,7 @@ class AlWinView : View {
 
     private fun initialize() {
         statusBarHeight = context.statusBarHeight
-        paint.color = resources.getColor(R.color.white_f2f)
+        paint.color = resources.getColor(R.color.white_ccc)
         paint.strokeWidth = strokeWidth
 
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -216,10 +216,10 @@ class AlWinView : View {
     fun getCropRectFNor(): RectF {
         val rectF = getRawCropRectF()
         Log.i("getCropRectFNor", "$rectF")
-        rectF.left = (rectF.left + strokeWidth / 2.0f) / dispSize.x.toFloat()
-        rectF.top = (rectF.top + strokeWidth / 2.0f) / dispSize.y.toFloat()
-        rectF.right = (rectF.right - strokeWidth / 2.0f) / dispSize.x.toFloat()
-        rectF.bottom = (rectF.bottom - strokeWidth / 2.0f) / dispSize.y.toFloat()
+        rectF.left = (rectF.left + strokeWidth) / dispSize.x.toFloat()
+        rectF.top = (rectF.top + strokeWidth) / dispSize.y.toFloat()
+        rectF.right = (rectF.right - strokeWidth) / dispSize.x.toFloat()
+        rectF.bottom = (rectF.bottom - strokeWidth) / dispSize.y.toFloat()
 
         rectF.left = rectF.left * 2 - 1
         rectF.top = 1 - rectF.top * 2

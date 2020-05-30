@@ -1,6 +1,5 @@
 package com.alimin.hwvc.screen.widget
 
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.PixelFormat
@@ -13,9 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.CycleInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.widget.CheckBox
 import com.alimin.hwvc.screen.R
 
@@ -53,6 +49,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
         }
         view = LayoutInflater.from(ctx).inflate(R.layout.win_float, null)
         view?.keepScreenOn = true
+        view?.isClickable = true
         cropView = view?.findViewById(R.id.cropView)
         fullBtn = view?.findViewById(R.id.fullBtn)
         recordBtn = view?.findViewById(R.id.recordBtn)
