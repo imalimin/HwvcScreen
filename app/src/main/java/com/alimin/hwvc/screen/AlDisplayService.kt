@@ -20,6 +20,7 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
+import com.alimin.hwvc.screen.ui.EditActivity
 import com.alimin.hwvc.screen.ui.ReqActivity
 import com.alimin.hwvc.screen.widget.FloatWindow
 import com.bumptech.glide.Glide
@@ -177,20 +178,10 @@ class AlDisplayService : Service() {
     }
 
     private fun showDoneNotify(bitmap: Bitmap) {
-        val intent = Intent().apply {
+        val intent = Intent(applicationContext, EditActivity::class.java).apply {
             action = Intent.ACTION_VIEW
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
-            val uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                Uri.fromFile(File(path))
-            } else {
-                FileProvider.getUriForFile(
-                    baseContext,
-                    applicationContext.packageName + ".provider",
-                    File(path)
-                )
-            }
-            setDataAndType(uri, "video/mp4")
-            putExtra(Intent.EXTRA_STREAM, uri)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            putExtra("path", path)
         }
         val pendingIntent = PendingIntent.getActivity(
             baseContext, 0, intent,
@@ -213,7 +204,7 @@ class AlDisplayService : Service() {
             resources.getString(R.string.id_handle_on_notification)
         )
             .setContentTitle("录屏成功")
-            .setContentText("点击播放")
+            .setContentText("点击进行编辑")
             .setSmallIcon(R.mipmap.ic_media_play)
             .setLargeIcon(bitmap)
             .setStyle(NotificationCompat.BigPictureStyle().bigPicture(bitmap))

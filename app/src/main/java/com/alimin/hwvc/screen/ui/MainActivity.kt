@@ -42,6 +42,7 @@ class MainActivity : BasePreferenceActivity() {
                         AlDisplayService.instance()?.shutdown()
 //                        setup()
                     } else {
+//                        startActivity(Intent(this@MainActivity, EditActivity::class.java))
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
                                 this
                             )

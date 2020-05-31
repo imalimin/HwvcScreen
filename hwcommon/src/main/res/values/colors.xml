@@ -8,6 +8,7 @@
     <color name="grey_800">#424242</color>
     <color name="grey_888">#888888</color>
 
+    <color name="black">#000000</color>
     <color name="black_232">#232323</color>
 
     <color name="colorLine">@color/white_ccc</color>

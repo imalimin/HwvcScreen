@@ -45,6 +45,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.ReqActivity" />
+        <activity android:name=".ui.EditActivity" />
     </application>
 
 </manifest>
