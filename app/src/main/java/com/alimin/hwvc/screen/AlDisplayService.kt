@@ -78,7 +78,7 @@ class AlDisplayService : Service() {
             return false
         }
         recorder?.release()
-        val dir = File("${Environment.getExternalStorageDirectory().path}/Screen recordings")
+        val dir = File("${Environment.getExternalStorageDirectory().path}/DCIM/Screen recordings")
         if (!dir.exists()) {
             dir.mkdirs()
         }
