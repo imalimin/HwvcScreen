@@ -29,6 +29,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
     private var optLayout: View? = null
     private var adjustSize: Int = 0
     private var animator: ValueAnimator? = null
+    private var onChangeListener: ((view: View) -> Unit)? = null
 
     init {
         wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -65,6 +66,7 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
             lp?.width = rectF.width().toInt()
             lp?.height = rectF.height().toInt() + optLayout!!.measuredHeight
             wm?.updateViewLayout(view!!, lp)
+            onChangeListener?.invoke(it)
         }
         recordBtn?.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -134,6 +136,10 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener {
 
     fun setClickable(enable: Boolean) {
         cropView?.isClickable = enable
+    }
+
+    fun setOnChangeListener(listener: (view: View) -> Unit) {
+        this.onChangeListener = listener
     }
 
     companion object {

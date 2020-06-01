@@ -18,6 +18,7 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import com.alimin.hwvc.screen.ui.EditActivity
@@ -163,7 +164,7 @@ class AlDisplayService : Service() {
             Handler().postDelayed({
                 isRecording = true
                 recorder?.start()
-            }, 1000)
+            }, 500)
         }
         win?.setOnCloseListener {
             win?.dismiss()
@@ -178,6 +179,7 @@ class AlDisplayService : Service() {
     }
 
     private fun showDoneNotify(bitmap: Bitmap) {
+        Toast.makeText(applicationContext, "${resources.getString(R.string.msg_record_success)}，文件保存在（${path}）", Toast.LENGTH_LONG).show()
         val intent = Intent(applicationContext, EditActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             flags = Intent.FLAG_ACTIVITY_NEW_TASK

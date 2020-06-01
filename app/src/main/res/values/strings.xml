@@ -12,6 +12,7 @@
     <string name="msg_calculate_size_doing">正在计算大小，请稍后...</string>
     <string name="msg_choose_export_quality">请选择GIF质量</string>
     <string name="msg_maybe_cost_more_time">当前视频过长，导出可能会花费较多时间，请耐心等待</string>
+    <string name="msg_record_success">录制成功</string>
     <string name="preview">预览</string>
     <string name="export_to">导出到</string>
     <string name="saved_to_dcim">已保存到相册</string>
