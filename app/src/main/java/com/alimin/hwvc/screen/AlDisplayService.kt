@@ -161,10 +161,8 @@ class AlDisplayService : Service() {
         win?.setOnStartListener {
             win?.setClickable(false)
             recorder?.cropOutputSize(win!!.getRect())
-            Handler().postDelayed({
-                isRecording = true
-                recorder?.start()
-            }, 500)
+            isRecording = true
+            recorder?.start()
         }
         win?.setOnCloseListener {
             win?.dismiss()
