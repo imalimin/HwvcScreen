@@ -13,6 +13,7 @@ import com.alimin.hwvc.screen.BuildConfig
 import com.alimin.hwvc.screen.R
 import com.alimin.hwvc.screen.adapter.SettingsAdapter
 import com.alimin.hwvc.screen.helper.PermissionHelper
+import com.alimin.hwvc.screen.ui.win.SelectWindow
 import com.lmy.common.ext.setOnItemClickListener
 import com.microsoft.officeuifabric.listitem.ListItemDivider
 import com.microsoft.officeuifabric.popupmenu.PopupMenu
@@ -42,20 +43,21 @@ class MainActivity : BasePreferenceActivity() {
                         AlDisplayService.instance()?.shutdown()
 //                        setup()
                     } else {
+                        SelectWindow(this@MainActivity)
 //                        startActivity(Intent(this@MainActivity, EditActivity::class.java))
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
-                                this
-                            )
-                        ) {
-                            startActivityForResult(
-                                Intent(
-                                    ACTION_MANAGE_OVERLAY_PERMISSION,
-                                    Uri.parse("package:$packageName")
-                                ), 0x02
-                            )
-                        } else {
-                            startService(Intent(this@MainActivity, AlDisplayService::class.java))
-                        }
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
+//                                this
+//                            )
+//                        ) {
+//                            startActivityForResult(
+//                                Intent(
+//                                    ACTION_MANAGE_OVERLAY_PERMISSION,
+//                                    Uri.parse("package:$packageName")
+//                                ), 0x02
+//                            )
+//                        } else {
+//                            startService(Intent(this@MainActivity, AlDisplayService::class.java))
+//                        }
                     }
                 }
                 1 -> {
