@@ -10,18 +10,31 @@ import com.alimin.hwvc.screen.ui.base.BaseWindow
 
 class RecordWindow(ctx: Context) : BaseWindow(ctx) {
     override val layoutResID: Int = R.layout.win_record
-
-    private val rectF = RectF()
-    private var closeBtn: View? = null
-    override fun initView() {
-        closeBtn = findViewById(R.id.closeBtn)
-        closeBtn?.setOnClickListener { dismiss() }
-    }
-
-    fun setRectF(rectF: RectF) {
-        rectF.set(rectF)
-    }
-
     override fun layoutType(): Int = ViewGroup.LayoutParams.WRAP_CONTENT
-    override fun layoutGravity(): Int =  Gravity.END or Gravity.BOTTOM
+    override fun layoutGravity(): Int = Gravity.END or Gravity.BOTTOM
+
+    private val rectF = RectF(0f, 0f, 0f, 0f)
+    private var listener: ((rectF: RectF) -> Unit)? = null
+    override fun initView() {
+        findViewById<View>(R.id.closeBtn)?.setOnClickListener { dismiss() }
+        findViewById<View>(R.id.selectBtn)?.setOnClickListener {
+            SelectWindow(getContext()).apply {
+                setOnEnterListener {
+                    if (null != it) {
+                        rectF.set(it)
+                    }
+                }
+            }
+        }
+        findViewById<View>(R.id.fullBtn)?.setOnClickListener {
+            listener?.invoke(RectF(0f, 0f, 0f, 0f))
+        }
+        findViewById<View>(R.id.recordBtn)?.setOnClickListener {
+            listener?.invoke(rectF)
+        }
+    }
+
+    fun setOnStartListener(listener: (rectF: RectF) -> Unit) {
+        this.listener = listener
+    }
 }

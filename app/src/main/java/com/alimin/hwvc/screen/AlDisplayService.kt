@@ -11,7 +11,6 @@ import android.media.projection.MediaProjection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -23,7 +22,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import com.alimin.hwvc.screen.ui.EditActivity
 import com.alimin.hwvc.screen.ui.ReqActivity
-import com.alimin.hwvc.screen.widget.FloatWindow
+import com.alimin.hwvc.screen.ui.win.RecordWindow
+import com.alimin.hwvc.screen.ui.win.StopWindow
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -45,7 +45,6 @@ class AlDisplayService : Service() {
     // 编码方式
     private var pCodec by AlPreference(MyApplication.instance.applicationContext, "Codec", 0)
     private var recorder: AlDisplayRecorder? = null
-    private var win: FloatWindow? = null
     private lateinit var path: String
     private val displaySize = Point()
     private val formatter = SimpleDateFormat("yyyMMdd-HHmmss")
@@ -155,29 +154,35 @@ class AlDisplayService : Service() {
     }
 
     private fun setupView() {
-        win = FloatWindow(this)
-        win?.setClickable(true)
-        win?.show()
-        win?.setOnStartListener {
-            win?.setClickable(false)
-            recorder?.cropOutputSize(win!!.getRect())
-            isRecording = true
-            recorder?.start()
-        }
-        win?.setOnCloseListener {
-            win?.dismiss()
-            shutdown()
-        }
-        win?.setOnFullListener {
-            win?.dismiss()
-            showStopNotify()
-            isRecording = true
-            recorder?.start()
+        RecordWindow(applicationContext).apply {
+            setOnStartListener {
+                val isFull = 0f == it.left && 0f == it.top && 0f == it.right && 0f == it.bottom
+                if (isFull) {
+                    showStopNotify()
+                } else {
+                    recorder?.cropOutputSize(it)
+                }
+                isRecording = true
+                recorder?.start()
+                dismiss()
+                if (!isFull) {
+                    StopWindow(applicationContext).apply {
+                        setOnStopListener {
+                            dismiss()
+                            shutdown()
+                        }
+                    }
+                }
+            }
         }
     }
 
     private fun showDoneNotify(bitmap: Bitmap) {
-        Toast.makeText(applicationContext, "${resources.getString(R.string.msg_record_success)}，文件保存在（${path}）", Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            applicationContext,
+            "${resources.getString(R.string.msg_record_success)}，文件保存在（${path}）",
+            Toast.LENGTH_LONG
+        ).show()
         val intent = Intent(applicationContext, EditActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             flags = Intent.FLAG_ACTIVITY_NEW_TASK

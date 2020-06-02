@@ -5,7 +5,9 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import com.alimin.hwvc.screen.R
+import kotlin.math.abs
 
 class CropView : View {
     enum class Loc { LT, LB, RB, RT, C }
@@ -15,6 +17,10 @@ class CropView : View {
     //Just for draw
     private val lb = PointF()
     private val rt = PointF()
+    private val delta = PointF(0f, 0f)
+    private var enableAlign16 = false
+    private val winLoc = IntArray(2)
+    private val wSize = Point()
     private var loc: Loc? = null
     private val lastTouchPointF = PointF()
     private val hRectF = RectF()
@@ -43,6 +49,8 @@ class CropView : View {
     }
 
     private fun initialize() {
+        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        wm.defaultDisplay?.getRealSize(wSize)
         paint.color = resources.getColor(R.color.white)
         paint.strokeWidth = strokeWidth
         val width = 9f * 6
@@ -104,8 +112,22 @@ class CropView : View {
             }
             MotionEvent.ACTION_MOVE -> {
                 if (null != loc) {
-                    val dx = event.x - lastTouchPointF.x
-                    val dy = event.y - lastTouchPointF.y
+                    var dx = event.x - lastTouchPointF.x
+                    var dy = event.y - lastTouchPointF.y
+                    if (enableAlign16) {
+                        delta.x += dx
+                        delta.y += dy
+                        dx = 0f
+                        dy = 0f
+                        if (abs(delta.x) >= 16) {
+                            dx = delta.x
+                            delta.x = 0f
+                        }
+                        if (abs(delta.y) >= 16) {
+                            dy = delta.y
+                            delta.y = 0f
+                        }
+                    }
                     when (loc) {
                         Loc.LT -> {
                             lt.offset(dx, dy)
@@ -224,6 +246,17 @@ class CropView : View {
         rb.x / (measuredWidth / 2f) - 1f,
         1f - rb.y / (measuredHeight / 2f)
     )
+
+    fun getCropRectFInWin(): RectF {
+        getLocationOnScreen(winLoc)
+        val rectF = RectF(
+            (lt.x + winLoc[0]) / (wSize.x / 2f) - 1f,
+            1f - (lt.y + winLoc[1]) / (wSize.y / 2f),
+            (rb.x + winLoc[0]) / (wSize.x / 2f) - 1f,
+            1f - (rb.y + winLoc[1]) / (wSize.y / 2f)
+        )
+        return rectF
+    }
 
     fun reset() {
         lt.x = measuredWidth / 4f

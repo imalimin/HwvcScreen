@@ -4,21 +4,32 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <FrameLayout
+    <ImageButton
+        android:id="@+id/fullBtn"
         android:layout_width="38dp"
         android:layout_height="38dp"
-        android:padding="8dp">
+        android:background="@color/transparent"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_media_play_full" />
 
-        <CheckBox
-            android:id="@+id/recordBtn"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/checkbox_media_record"
-            android:button="@null"
-            android:checked="false"
-            android:scaleType="centerInside" />
-    </FrameLayout>
+    <ImageButton
+        android:id="@+id/selectBtn"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:background="@color/transparent"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_media_play_full" />
 
+    <ImageButton
+        android:id="@+id/recordBtn"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:background="@color/transparent"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_media_play" />
 
     <ImageButton
         android:id="@+id/closeBtn"

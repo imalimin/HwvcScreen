@@ -2,44 +2,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#33000000"
-    android:fitsSystemWindows="false">
+    android:background="#33000000">
 
     <com.alimin.hwvc.screen.widget.CropView
         android:id="@+id/cropView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/enterBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-        <ImageButton
-            android:id="@+id/fullBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@color/transparent"
-            android:padding="8dp"
-            android:scaleType="centerInside"
-            android:src="@mipmap/ic_media_play_full" />
-
-        <ImageButton
-            android:id="@+id/enterBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@color/transparent"
-            android:padding="8dp"
-            android:scaleType="centerInside"
-            android:src="@mipmap/ic_media_play" />
-
-        <ImageButton
-            android:id="@+id/closeBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@color/transparent"
-            android:padding="8dp"
-            android:scaleType="centerInside"
-            android:src="@mipmap/ic_media_close" />
-    </LinearLayout>
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:padding="8dp"
+        android:text="@string/enter"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/text_size_2x" />
 </FrameLayout>
