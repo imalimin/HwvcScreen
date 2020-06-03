@@ -9,7 +9,7 @@ class MyApplication : BaseApplication() {
         super.onCreate()
         instance = this
         HWVC.init(applicationContext)
-        CrashReport.initCrashReport(applicationContext, "4ece0a2b03", false)
+        CrashReport.initCrashReport(applicationContext, "4ece0a2b03", BuildConfig.DEBUG)
     }
 
     companion object {
