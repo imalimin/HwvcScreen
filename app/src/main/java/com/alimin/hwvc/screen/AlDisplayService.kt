@@ -167,6 +167,7 @@ class AlDisplayService : Service() {
                 dismiss()
                 if (!isFull) {
                     StopWindow(applicationContext).apply {
+                        setRectF(it)
                         setOnStopListener {
                             dismiss()
                             shutdown()

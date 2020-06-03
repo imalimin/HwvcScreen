@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_media_operate"
     android:orientation="horizontal">
 
     <ImageButton
@@ -11,6 +12,7 @@
         android:background="@color/transparent"
         android:padding="8dp"
         android:scaleType="centerInside"
+        android:tint="@color/colorAccent"
         android:src="@mipmap/ic_media_play_full" />
 
     <ImageButton
@@ -20,7 +22,8 @@
         android:background="@color/transparent"
         android:padding="8dp"
         android:scaleType="centerInside"
-        android:src="@mipmap/ic_media_play_full" />
+        android:tint="@color/colorAccent"
+        android:src="@mipmap/ic_media_crop" />
 
     <ImageButton
         android:id="@+id/recordBtn"
@@ -29,6 +32,7 @@
         android:background="@color/transparent"
         android:padding="8dp"
         android:scaleType="centerInside"
+        android:tint="@color/colorAccent"
         android:src="@mipmap/ic_media_play" />
 
     <ImageButton
@@ -38,5 +42,6 @@
         android:background="@color/transparent"
         android:padding="10dp"
         android:scaleType="centerInside"
+        android:tint="@color/colorAccent"
         android:src="@mipmap/ic_media_close" />
 </LinearLayout>

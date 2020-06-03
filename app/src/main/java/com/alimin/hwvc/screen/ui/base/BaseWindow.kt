@@ -34,7 +34,6 @@ abstract class BaseWindow(private val ctx: Context) {
     private fun setup() {
         view = LayoutInflater.from(ctx).inflate(layoutResID, null)
         view?.isClickable = true
-        initView()
         lp = WindowManager.LayoutParams().apply {
             format = PixelFormat.RGBA_8888
             flags =
@@ -58,6 +57,7 @@ abstract class BaseWindow(private val ctx: Context) {
             )
             return
         }
+        initView()
         show()
     }
 
@@ -77,7 +77,15 @@ abstract class BaseWindow(private val ctx: Context) {
         } else view?.findViewById(id)
     }
 
+    fun getScreenSize(): Point = wSize
+
     fun getContext(): Context = ctx
+
+    fun setGravity(g: Int) {
+        lp?.gravity = g
+        wm?.updateViewLayout(view, lp)
+    }
+
     open fun layoutType(): Int = ViewGroup.LayoutParams.MATCH_PARENT
     open fun layoutGravity(): Int = Gravity.START or Gravity.TOP
 }
