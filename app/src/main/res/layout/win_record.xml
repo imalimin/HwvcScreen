@@ -7,41 +7,41 @@
 
     <ImageButton
         android:id="@+id/fullBtn"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="@dimen/icon_record_size"
+        android:layout_height="@dimen/icon_record_size"
         android:background="@color/transparent"
-        android:padding="8dp"
+        android:padding="@dimen/icon_record_padding"
         android:scaleType="centerInside"
-        android:tint="@color/colorAccent"
-        android:src="@mipmap/ic_media_play_full" />
+        android:src="@mipmap/ic_media_play_full"
+        android:tint="@color/colorAccent" />
 
     <ImageButton
         android:id="@+id/selectBtn"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="@dimen/icon_record_size"
+        android:layout_height="@dimen/icon_record_size"
         android:background="@color/transparent"
-        android:padding="8dp"
+        android:padding="@dimen/icon_record_padding"
         android:scaleType="centerInside"
-        android:tint="@color/colorAccent"
-        android:src="@mipmap/ic_media_crop" />
+        android:src="@mipmap/ic_media_crop"
+        android:tint="@color/colorAccent" />
 
     <ImageButton
         android:id="@+id/recordBtn"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="@dimen/icon_record_size"
+        android:layout_height="@dimen/icon_record_size"
         android:background="@color/transparent"
-        android:padding="8dp"
+        android:padding="@dimen/icon_record_padding"
         android:scaleType="centerInside"
-        android:tint="@color/colorAccent"
-        android:src="@mipmap/ic_media_play" />
+        android:src="@mipmap/ic_media_play"
+        android:tint="@color/colorAccent" />
 
     <ImageButton
         android:id="@+id/closeBtn"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="@dimen/icon_record_size"
+        android:layout_height="@dimen/icon_record_size"
         android:background="@color/transparent"
-        android:padding="10dp"
+        android:padding="@dimen/icon_record_padding"
         android:scaleType="centerInside"
-        android:tint="@color/colorAccent"
-        android:src="@mipmap/ic_media_close" />
+        android:src="@mipmap/ic_media_close"
+        android:tint="@color/colorAccent" />
 </LinearLayout>

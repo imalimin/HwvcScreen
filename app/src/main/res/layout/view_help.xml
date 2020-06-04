@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TableRow android:gravity="center_vertical">
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/fullBtn"
+                android:layout_width="@dimen/icon_record_size"
+                android:layout_height="@dimen/icon_record_size"
+                android:background="@color/transparent"
+                android:padding="@dimen/icon_record_padding"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ic_media_play_full"
+                android:tint="@color/colorAccent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="全屏录制"
+                android:textColor="@color/grey_800"
+                android:textSize="@dimen/text_size_2x" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/selectBtn"
+                android:layout_width="@dimen/icon_record_size"
+                android:layout_height="@dimen/icon_record_size"
+                android:background="@color/transparent"
+                android:padding="@dimen/icon_record_padding"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ic_media_crop"
+                android:tint="@color/colorAccent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="选择录制区域"
+                android:textColor="@color/grey_800"
+                android:textSize="@dimen/text_size_2x" />
+        </LinearLayout>
+    </TableRow>
+
+    <TableRow android:gravity="center_vertical">
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/recordBtn"
+                android:layout_width="@dimen/icon_record_size"
+                android:layout_height="@dimen/icon_record_size"
+                android:background="@color/transparent"
+                android:padding="@dimen/icon_record_padding"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ic_media_play"
+                android:tint="@color/colorAccent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开始录制"
+                android:textColor="@color/grey_800"
+                android:textSize="@dimen/text_size_2x" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/closeBtn"
+                android:layout_width="@dimen/icon_record_size"
+                android:layout_height="@dimen/icon_record_size"
+                android:background="@color/transparent"
+                android:padding="@dimen/icon_record_padding"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ic_media_close"
+                android:tint="@color/colorAccent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="关闭面板"
+                android:textColor="@color/grey_800"
+                android:textSize="@dimen/text_size_2x" />
+        </LinearLayout>
+
+    </TableRow>
+</TableLayout>
