@@ -128,18 +128,6 @@ class CropView : View {
                             delta.y = 0f
                         }
                     }
-                    if (lt.x + dx <= 0) {
-                        dx = -lt.x
-                    }
-                    if (rb.x + dx >= measuredWidth) {
-                        dx = measuredWidth - rb.x
-                    }
-                    if (lt.y + dy <= 0) {
-                        dy = -lt.y
-                    }
-                    if (rb.y + dy >= measuredHeight) {
-                        dy = measuredHeight - rb.y
-                    }
                     when (loc) {
                         Loc.LT -> {
                             lt.offset(dx, dy)
@@ -168,6 +156,18 @@ class CropView : View {
                             lt.y = Math.min(lt.y, rb.y - MIN_CROP_SIZE)
                         }
                         Loc.C -> {
+                            if (lt.x + dx <= 0) {
+                                dx = -lt.x
+                            }
+                            if (rb.x + dx >= measuredWidth) {
+                                dx = measuredWidth - rb.x
+                            }
+                            if (lt.y + dy <= 0) {
+                                dy = -lt.y
+                            }
+                            if (rb.y + dy >= measuredHeight) {
+                                dy = measuredHeight - rb.y
+                            }
                             lt.offset(dx, dy)
                             rb.offset(dx, dy)
                         }
