@@ -210,7 +210,7 @@ class AlDisplayService : Service() {
             resources.getString(R.string.id_handle_on_notification)
         )
             .setContentTitle("录屏成功")
-            .setContentText("点击进行编辑")
+            .setContentText("点击进行预览/导出为GIF")
             .setSmallIcon(R.mipmap.ic_media_play)
             .setLargeIcon(bitmap)
             .setStyle(NotificationCompat.BigPictureStyle().bigPicture(bitmap))
