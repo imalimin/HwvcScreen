@@ -107,13 +107,13 @@ class AlDisplayService : Service() {
         recorder?.setOutputFilePath(path)
         when (pQuality) {
             0 -> {
-                recorder?.setBitrate(1)
+                recorder?.setBitrate(2)
             }
             1 -> {
-                recorder?.setBitrate(3)
+                recorder?.setBitrate(5)
             }
             2 -> {
-                recorder?.setBitrate(5)
+                recorder?.setBitrate(7)
             }
         }
         when (pEff) {
