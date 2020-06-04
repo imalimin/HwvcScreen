@@ -43,14 +43,22 @@ class StopWindow(ctx: Context) : BaseWindow(ctx) {
         )
         val rb = PointF(
             (1f - rectF.right) * getScreenSize().x / 2,
-            (1f + rectF.bottom) * getScreenSize().y / 2- getContext().getNavigationBarHeight()
+            (1f + rectF.bottom) * getScreenSize().y / 2 - getContext().getNavigationBarHeight()
         )
         val lb = PointF(lt.x, rb.y)
         val rt = PointF(rb.x, lt.y)
         var gravity = layoutGravity()
-        Log.i("aliminabc", "location ${rb.x}x${rb.y},  ${stopLayout!!.measuredWidth}x${stopLayout!!.measuredHeight}")
         if (rb.x < stopLayout!!.measuredWidth && rb.y < stopLayout!!.measuredHeight) {
             gravity = Gravity.START or Gravity.BOTTOM
+            if (lb.x < stopLayout!!.measuredWidth && lb.y < stopLayout!!.measuredHeight) {
+                gravity = Gravity.END or Gravity.TOP
+                if (rt.x < stopLayout!!.measuredWidth && rt.y < stopLayout!!.measuredHeight) {
+                    gravity = Gravity.START or Gravity.TOP
+                    if (lt.x < stopLayout!!.measuredWidth && lt.y < stopLayout!!.measuredHeight) {
+                        gravity = Gravity.END or Gravity.BOTTOM
+                    }
+                }
+            }
         }
         setGravity(gravity)
     }
