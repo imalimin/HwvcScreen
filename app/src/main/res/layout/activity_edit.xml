@@ -38,8 +38,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="16dp"
+            android:background="@drawable/bg_media_operate"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
             android:text="@string/action_export_gif"
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_4x" />
