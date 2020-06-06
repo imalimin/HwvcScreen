@@ -94,8 +94,10 @@ class AlDisplayService : Service() {
 
     fun shutdown() {
         recorder?.release()
-        mediaNotify(applicationContext, path)
-        showDoneNotify()
+        if (isRecording) {
+            mediaNotify(applicationContext, path)
+            showDoneNotify()
+        }
         isRecording = false
         stopSelf()
     }

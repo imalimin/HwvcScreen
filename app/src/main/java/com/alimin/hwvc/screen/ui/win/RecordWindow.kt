@@ -5,6 +5,7 @@ import android.graphics.RectF
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import com.alimin.hwvc.screen.AlDisplayService
 import com.alimin.hwvc.screen.R
 import com.alimin.hwvc.screen.ui.base.BaseWindow
 
@@ -16,7 +17,10 @@ class RecordWindow(ctx: Context) : BaseWindow(ctx) {
     private val rectF = RectF(0f, 0f, 0f, 0f)
     private var listener: ((rectF: RectF) -> Unit)? = null
     override fun initView() {
-        findViewById<View>(R.id.closeBtn)?.setOnClickListener { dismiss() }
+        findViewById<View>(R.id.closeBtn)?.setOnClickListener {
+            AlDisplayService.instance()?.shutdown()
+            dismiss()
+        }
         findViewById<View>(R.id.selectBtn)?.setOnClickListener {
             this@RecordWindow.dismiss()
             SelectWindow(getContext()).apply {
