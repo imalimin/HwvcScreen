@@ -11,6 +11,7 @@ import com.alimin.hwvc.screen.AlDisplayService
 import com.alimin.hwvc.screen.R
 import com.alimin.hwvc.screen.helper.PermissionHelper
 import com.lmy.common.ui.BaseActivity
+import kotlinx.android.synthetic.main.activity_req.*
 
 class ReqActivity : BaseActivity() {
     override val layoutResID: Int = R.layout.activity_req
@@ -18,12 +19,14 @@ class ReqActivity : BaseActivity() {
     private var dialog: AlertDialog? = null
 
     override fun initView() {
+        showToolbar(toolbar, R.string.start, R.mipmap.ic_back_black)
+        fillStatusBar()
+        setDarkStatusBar()
         checkPermissions()
     }
 
     override fun onRestart() {
         super.onRestart()
-        super.onResume()
         checkPermissions()
     }
 

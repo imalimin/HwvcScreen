@@ -21,6 +21,7 @@
     <string name="saved_to_dcim">已保存到相册</string>
     <string name="enter">确认</string>
     <string name="cancel">取消</string>
+    <string name="start">开始</string>
     <string-array name="array_quality">
         <item>低</item>
         <item>中</item>
