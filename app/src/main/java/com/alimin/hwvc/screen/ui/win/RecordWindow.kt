@@ -18,8 +18,10 @@ class RecordWindow(ctx: Context) : BaseWindow(ctx) {
     override fun initView() {
         findViewById<View>(R.id.closeBtn)?.setOnClickListener { dismiss() }
         findViewById<View>(R.id.selectBtn)?.setOnClickListener {
+            this@RecordWindow.dismiss()
             SelectWindow(getContext()).apply {
                 setOnEnterListener {
+                    this@RecordWindow.show()
                     if (null != it) {
                         rectF.set(it)
                     }

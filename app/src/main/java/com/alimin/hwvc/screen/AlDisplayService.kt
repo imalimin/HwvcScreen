@@ -54,9 +54,6 @@ class AlDisplayService : Service() {
         _instance = this
         super.onCreate()
         Log.i("AlDisplayService", "onCreate.")
-        startActivity(Intent(baseContext, ReqActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        })
     }
 
     override fun onDestroy() {

@@ -28,8 +28,6 @@ class MainActivity : BasePreferenceActivity() {
         setDarkStatusBar()
         setSupportActionBar(toolbar)
         toolbar.subtitle = BuildConfig.VERSION_NAME
-        if (!PermissionHelper.requestPermissions(this, PermissionHelper.PERMISSIONS_BASE))
-            return
         recyclerView.adapter = adapter
         setup()
 
@@ -42,20 +40,10 @@ class MainActivity : BasePreferenceActivity() {
                         AlDisplayService.instance()?.shutdown()
 //                        setup()
                     } else {
+                        startActivity(Intent(baseContext, ReqActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        })
 //                        startActivity(Intent(this@MainActivity, EditActivity::class.java))
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
-                                this
-                            )
-                        ) {
-                            startActivityForResult(
-                                Intent(
-                                    ACTION_MANAGE_OVERLAY_PERMISSION,
-                                    Uri.parse("package:$packageName")
-                                ), 0x02
-                            )
-                        } else {
-                            startService(Intent(this@MainActivity, AlDisplayService::class.java))
-                        }
                     }
                 }
                 1 -> {
@@ -149,34 +137,5 @@ class MainActivity : BasePreferenceActivity() {
         it.add(body)
         it.add(value)
         items.add(it)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (null == grantResults || grantResults.isEmpty()) return
-        when (requestCode) {
-            PermissionHelper.REQUEST_MY -> {
-                if (PermissionHelper.checkGrantResults(grantResults)) {
-                    initView()
-                } else {
-                    showPermissionsDialog()
-                }
-            }
-        }
-    }
-
-    private fun showPermissionsDialog() {
-        AlertDialog.Builder(this)
-            .setMessage("Please grant permission in the permission settings")
-            .setNegativeButton("cancel") { dialog, which -> finish() }
-            .setPositiveButton("enter") { dialog, which ->
-                PermissionHelper.gotoPermissionManager(this@MainActivity)
-                finish()
-            }
-            .show()
     }
 }

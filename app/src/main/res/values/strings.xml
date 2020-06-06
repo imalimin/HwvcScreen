@@ -11,12 +11,16 @@
     <string name="msg_doing">正在处理，请稍后...</string>
     <string name="msg_calculate_size_doing">正在计算大小，请稍后...</string>
     <string name="msg_choose_export_quality">请选择GIF质量</string>
-    <string name="msg_maybe_cost_more_time">当前视频过长，导出可能会花费较多时间，请耐心等待</string>
+    <string name="msg_maybe_cost_more_time">当前视频过长，导出可能会花费较长时间，请耐心等待</string>
     <string name="msg_record_success">录制成功</string>
+    <string name="msg_grant_permission_tip">我们需要这些权限才能正常工作\n储存：用于读写录屏文件\n麦克风：用于录屏的同时录制麦克风声音，仅在录屏过程中使用</string>
+    <string name="msg_grant_permission_pls">我们无法获得这些权限，请到设置中授予</string>
+    <string name="msg_grant_overlays_permission">我们需要悬浮窗权限来显示录屏工具，悬浮窗仅在录制过程中显示，录制完成将会消失</string>
     <string name="preview">预览</string>
     <string name="export_to">导出到</string>
     <string name="saved_to_dcim">已保存到相册</string>
     <string name="enter">确认</string>
+    <string name="cancel">取消</string>
     <string-array name="array_quality">
         <item>低</item>
         <item>中</item>
